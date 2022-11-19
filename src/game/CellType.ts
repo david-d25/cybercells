@@ -1,0 +1,4 @@
+enum CellType {
+    PHAGOCYTE,
+    FLAGELLOCYTE
+}
