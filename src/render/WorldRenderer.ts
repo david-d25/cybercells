@@ -38,10 +38,10 @@ export default class WorldRenderer {
     }
 
     // From world coordinates to screen coordinates
-    project(screenPoint: vec2): vec2 {
+    project(worldPoint: vec2): vec2 {
         const projection = this.buildCameraTransform()
         const inverted = mat4.invert(projection, projection)
-        return vec2.transformMat4(vec2.create(), screenPoint, inverted)
+        return vec2.transformMat4(vec2.create(), worldPoint, inverted)
     }
 
     // From screen coordinates to world coordinates
