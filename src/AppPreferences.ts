@@ -1,0 +1,3 @@
+export default class AppPreferences {
+    // Nothing here so far...
+}

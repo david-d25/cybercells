@@ -1,4 +1,6 @@
-class Genome {
+import CellType from "@/game/CellType";
+
+export default class Genome {
     type: CellType = CellType.FLAGELLOCYTE
     cyanPigment: number = 0
     magentaPigment: number = 0
@@ -17,7 +19,7 @@ class Genome {
 
     children: [Genome, Genome] = [this, this]
 
-    deepCopy = this.copyRecursive()
+    deepCopy = this.copyRecursive
 
     applyRadiation() {
         // TODO
@@ -42,8 +44,8 @@ class Genome {
         copies.set(this, result)
 
         result.children = [
-            copies.has(this.children[0]) ? copies.get(this.children[0])!! : this.children[0].copyRecursive(copies),
-            copies.has(this.children[1]) ? copies.get(this.children[1])!! : this.children[1].copyRecursive(copies)
+            copies.has(this.children[0]) ? copies.get(this.children[0])! : this.children[0].copyRecursive(copies),
+            copies.has(this.children[1]) ? copies.get(this.children[1])! : this.children[1].copyRecursive(copies)
         ]
 
         return result

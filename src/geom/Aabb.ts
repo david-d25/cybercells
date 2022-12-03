@@ -1,3 +1,5 @@
+import Vector2 from "@/geom/Vector2";
+
 /**
  * Represents an Axis-Aligned Bounding Box.
  */

@@ -1,6 +1,6 @@
 const { sqrt, pow, sin, cos, acos, PI } = Math
 
-class Vector2 {
+export default class Vector2 {
     x: number
     y: number
 

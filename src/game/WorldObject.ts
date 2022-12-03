@@ -1,0 +1,3 @@
+interface WorldObject {
+    id: number
+}
