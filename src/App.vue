@@ -11,13 +11,14 @@ import ControlsPanel from "@/components/ControlsPanel.vue";
 import GenomeLibrary from "@/game/GenomeLibrary";
 import WorldState from "@/game/state/WorldState";
 import AppPreferences from "@/AppPreferences";
+import ToolsManager from "@/game/tool/ToolsManager";
 
 provide('worldState', ref<WorldState>(WorldState.TEMPORARY_DEBUG))
 provide('genomeLibrary', ref<GenomeLibrary>(new GenomeLibrary()))
 provide('appPreferences', ref<AppPreferences>(new AppPreferences()))
+provide('toolsManager', ref(new ToolsManager()))
 
 // todo provide updater
-// todo provide tools
 </script>
 
 <style>

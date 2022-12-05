@@ -2,7 +2,9 @@
   <div class="viewer-wr" ref="containerRef">
     <canvas class="canvas"
             ref="canvasRef"
-            @click="onClick"/>
+            @click="onMouseEvent"
+            @mousedown="onMouseEvent"
+            @mouseup="onMouseEvent"/>
   </div>
 </template>
 
@@ -10,9 +12,12 @@
 import { ref, inject, onMounted, Ref } from 'vue';
 import WorldState from "@/game/state/WorldState";
 import WorldRenderer from "@/render/WorldRenderer";
+import WorldMouseEvent from "@/game/event/WorldMouseEvent";
 
 const canvasRef = ref<HTMLCanvasElement>()
 const containerRef = ref<HTMLDivElement>()
+
+const emit = defineEmits<{(e: string, payload: WorldMouseEvent): void}>()
 
 let worldState: Ref<WorldState> = inject('worldState')!
 
@@ -31,13 +36,12 @@ function init() {
   renderingRoutine();
 }
 
-function onClick(event: MouseEvent) {
+function onMouseEvent(event: MouseEvent) {
   const dps = window.devicePixelRatio
   const [ screenX, screenY ] = [event.x * dps, event.y * dps]
   const [ worldX, worldY ] = renderer.unproject([screenX, screenY])
 
-  console.log(`Screen coords ${screenX} ${screenY}`)
-  console.log(`World coords ${worldX} ${worldY}`)
+  emit(`world-${event.type}`, new WorldMouseEvent(`world-${event.type}`, screenX, screenY, worldX, worldY))
 }
 
 function renderingRoutine() {

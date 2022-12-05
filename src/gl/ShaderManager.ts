@@ -40,12 +40,12 @@ export default class ShaderManager {
     }
 
     private loadShader(type: number, source: string): WebGLShader {
-        const shader = this.gl.createShader(type)!!
+        const shader = this.gl.createShader(type)!
         this.gl.shaderSource(shader, source)
         this.gl.compileShader(shader)
 
         if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            throw new Error(`Couldn't compile shaders! Logs:\n${this.gl.getShaderInfoLog(shader)}`)
+            throw new Error(`Couldn't compile shaders! Logs:\n\n${this.gl.getShaderInfoLog(shader)}`)
         }
 
         return shader

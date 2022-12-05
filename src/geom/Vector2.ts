@@ -91,4 +91,12 @@ export default class Vector2 {
     static unit(radians: number): Vector2 {
         return new Vector2(cos(radians), sin(radians))
     }
+
+    static equals(a?: Vector2, b?: Vector2): boolean {
+        if (a == null && b == null)
+            return true
+        if (a == null || b == null)
+            return false
+        return a.x == b.x && a.y == b.y
+    }
 }
