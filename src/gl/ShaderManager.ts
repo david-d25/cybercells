@@ -14,7 +14,7 @@ export default class ShaderManager {
         return new ShaderManager(gl)
     }
 
-    initShaderProgram(vertexShaderSource: string, fragmentShaderSource: string): WebGLProgram {
+    newShader(vertexShaderSource: string, fragmentShaderSource: string): WebGLProgram {
         const vertexShader = this.loadShader(this.gl.VERTEX_SHADER, vertexShaderSource)
         const fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fragmentShaderSource)
 

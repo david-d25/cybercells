@@ -22,7 +22,7 @@ export default class WorldState {
     static NULL = new WorldState(0, 0, new Vector2(), 0, 0)
 
     static TEMPORARY_DEBUG = (() => {
-        const state = new WorldState(400, 400, new Vector2(), 0, 0, new Camera(new Vector2(0, 0), 800))
+        const state = new WorldState(800, 600, new Vector2(), 0, 0, new Camera(new Vector2(0, 0), 800))
         const genome = new Genome()
         state.cells.set(0, new CellState(new Vector2(50, 50), new Vector2(), 200, 0, 0, genome))
         return state

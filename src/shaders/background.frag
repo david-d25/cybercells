@@ -3,8 +3,10 @@
 precision highp float;
 
 const float CHECKER_SIZE = 25.0;
+
 uniform mat4 viewMatrix;
 uniform float time;
+uniform vec2 areaSize;
 
 out vec4 color;
 
@@ -26,4 +28,7 @@ void main() {
 
     if (abs(x) < 10.0 && abs(y) < 10.0)
         color = mix(color, vec4(0, 0, 0, 1), 0.5);
+
+    if (x < 0.0 || y < 0.0 || x >= areaSize.x || y >= areaSize.y)
+        color = mix(color, vec4(0, 0, 0, 1), 0.8);
 }

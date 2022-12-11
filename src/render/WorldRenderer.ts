@@ -33,8 +33,8 @@ export default class WorldRenderer {
     static init(canvas: HTMLCanvasElement, worldState: WorldState): WorldRenderer {
         const shaderManager = ShaderManager.init(canvas);
 
-        const backgroundShader = shaderManager.initShaderProgram(commonVertexShaderSource, backgroundFragmentShaderSource)
-        const cellShader = shaderManager.initShaderProgram(commonVertexShaderSource, cellFragmentShaderSource)
+        const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource)
+        const cellShader = shaderManager.newShader(commonVertexShaderSource, cellFragmentShaderSource)
         return new WorldRenderer(shaderManager, backgroundShader, cellShader, worldState)
     }
 
@@ -109,6 +109,7 @@ export default class WorldRenderer {
         const viewMatrix = this.buildViewTransform()
         gl.uniformMatrix4fv(gl.getUniformLocation(this.backgroundShader, 'viewMatrix'), false, viewMatrix)
         gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'time'), (Date.now() - this.startTime)/1000)
+        gl.uniform2f(gl.getUniformLocation(this.backgroundShader, 'areaSize'), this.worldState.width, this.worldState.height)
 
         this.setDrawToBufferTexture()
 
