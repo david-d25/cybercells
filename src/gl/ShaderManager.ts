@@ -30,7 +30,21 @@ export default class ShaderManager {
         return shaderProgram
     }
 
-    createArrayBuffer(data: number[]): WebGLBuffer {
+    newTexture(width: number, height: number): WebGLTexture | null {
+        const texture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texImage2D(
+            this.gl.TEXTURE_2D, 0, this.gl.RGBA, width, height,
+            0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null
+        );
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        return texture
+    }
+
+    newArrayBuffer(data: number[]): WebGLBuffer {
         const buffer = this.gl.createBuffer()
         if (buffer == null)
             throw new Error("Could not create buffer")

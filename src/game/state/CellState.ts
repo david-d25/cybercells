@@ -15,6 +15,10 @@ export default class CellState implements WorldObject {
 
     connections: Map<number, CellConnectionState> = new Map()
     age: number = 0
+
+    public get radius() {
+        return Math.sqrt(this.mass)
+    }
 }
 
 class CellConnectionState {

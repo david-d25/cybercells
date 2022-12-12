@@ -17,7 +17,7 @@ import WorldState from "@/game/state/WorldState";
 import WorldRenderer from "@/render/WorldRenderer";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
 
-const SCROLL_SENSITIVITY = 0.01
+const SCROLL_SENSITIVITY = 0.005
 
 const canvasRef = ref<HTMLCanvasElement>()
 const containerRef = ref<HTMLDivElement>()
@@ -49,7 +49,7 @@ function onWheel(event: WheelEvent) {
   if (event.deltaY > 0)
     camera.height *= 1 + event.deltaY*SCROLL_SENSITIVITY
   else
-    camera.height *= 1/(-event.deltaY*SCROLL_SENSITIVITY + 1)
+    camera.height *= 1/(1 - event.deltaY*SCROLL_SENSITIVITY)
   if (camera.height < 1)
     camera.height = 1
 }

@@ -15,8 +15,9 @@ export default class WorldRenderer {
     private readonly drawBufferTextureUv: WebGLBuffer
     private readonly framebuffer: WebGLFramebuffer | null
 
-    private drawBufferTextureSize: Vector2 = new Vector2()
-    private drawBufferTexture: WebGLTexture | null = null
+    private bufferTextureSize: Vector2 = new Vector2()
+    private sourceBufferTexture: WebGLTexture | null = null
+    private targetBufferTexture: WebGLTexture | null = null
 
     private constructor(
         private shaderManager: ShaderManager,
@@ -81,15 +82,29 @@ export default class WorldRenderer {
         gl.uniformMatrix4fv(gl.getUniformLocation(this.cellShader, 'viewMatrix'), false, viewMatrix)
         gl.uniform1f(gl.getUniformLocation(this.cellShader, 'time'), (Date.now() - this.startTime)/1000)
 
-        gl.uniform2f(gl.getUniformLocation(this.cellShader, 'imageSize'), this.drawBufferTextureSize.x, this.drawBufferTextureSize.y)
+        gl.uniform2f(gl.getUniformLocation(this.cellShader, 'imageSize'), this.bufferTextureSize.x, this.bufferTextureSize.y)
 
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer)
-        gl.bindTexture(gl.TEXTURE_2D, this.drawBufferTexture)
-        gl.uniform1i(gl.getUniformLocation(this.cellShader, 'image'), 0)
+        for (const [index, cell] of this.worldState.cells) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer)
+            gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture)
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'image'), 0)
 
-        this.setDrawToCanvas()
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'cell.id'), cell.id)
+            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.center'), cell.center.x, cell.center.y)
+            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.speed'), cell.speed.x, cell.speed.y)
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.mass'), cell.mass)
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.angle'), cell.angle)
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius)
 
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+            if (index == this.worldState.cells.size - 1)
+                this.setDrawToCanvas()
+            else
+                this.setDrawToBufferTexture()
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+            this.swapBuffers()
+        }
     }
 
     private renderBackground() {
@@ -114,6 +129,8 @@ export default class WorldRenderer {
         this.setDrawToBufferTexture()
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+        this.swapBuffers()
     }
 
     private buildCameraTransform(): mat4 {
@@ -141,51 +158,43 @@ export default class WorldRenderer {
         if (this.drawBufferTextureNeedsUpdate()) {
             const gl = this.shaderManager.gl
 
-            if (this.drawBufferTexture != null)
-                gl.deleteTexture(this.drawBufferTexture)
+            gl.deleteTexture(this.sourceBufferTexture)
+            gl.deleteTexture(this.targetBufferTexture)
 
-            const texture = gl.createTexture()!;
-            gl.bindTexture(gl.TEXTURE_2D, texture);
+            const width = this.shaderManager.gl.drawingBufferWidth
+            const height = this.shaderManager.gl.drawingBufferHeight
 
-            gl.texImage2D(
-                gl.TEXTURE_2D, 0, gl.RGBA,
-                this.shaderManager.gl.drawingBufferWidth,
-                this.shaderManager.gl.drawingBufferHeight,
-                0, gl.RGBA, gl.UNSIGNED_BYTE, null
-            );
+            this.sourceBufferTexture = this.shaderManager.newTexture(width, height)
+            this.targetBufferTexture = this.shaderManager.newTexture(width, height)
 
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-            this.drawBufferTextureSize = new Vector2(
-                this.shaderManager.gl.drawingBufferWidth,
-                this.shaderManager.gl.drawingBufferHeight
-            )
-            this.drawBufferTexture = texture
+            this.bufferTextureSize = new Vector2(width, height)
         }
     }
 
     private drawBufferTextureNeedsUpdate(): boolean {
-        return  this.drawBufferTexture == null ||
-                this.drawBufferTextureSize.x != this.shaderManager.gl.drawingBufferWidth ||
-                this.drawBufferTextureSize.y != this.shaderManager.gl.drawingBufferHeight
+        return  this.bufferTextureSize.x != this.shaderManager.gl.drawingBufferWidth ||
+                this.bufferTextureSize.y != this.shaderManager.gl.drawingBufferHeight
     }
 
     private setDrawToBufferTexture() {
         this.autoUpdateDrawBufferTexture()
         const gl = this.shaderManager.gl
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.drawBufferTexture, 0)
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.targetBufferTexture, 0)
     }
 
     private setDrawToCanvas() {
         this.shaderManager.gl.bindFramebuffer(this.shaderManager.gl.FRAMEBUFFER, null);
     }
 
+    private swapBuffers() {
+        const swap = this.sourceBufferTexture
+        this.sourceBufferTexture = this.targetBufferTexture
+        this.targetBufferTexture = swap
+    }
+
     private createDrawBufferTextureUv() {
-        return this.shaderManager.createArrayBuffer([
+        return this.shaderManager.newArrayBuffer([
             1.0,  1.0,
             0.0,  1.0,
             1.0,  0.0,
@@ -194,7 +203,7 @@ export default class WorldRenderer {
     }
 
     private createMainMesh(): WebGLBuffer {
-        return this.shaderManager.createArrayBuffer([
+        return this.shaderManager.newArrayBuffer([
             1.0, 1.0,
             -1.0, 1.0,
             1.0, -1.0,

@@ -2,10 +2,21 @@
 
 precision highp float;
 
+struct Cell {
+    int id;
+    vec2 center;
+    vec2 speed;
+    float mass;
+    float angle;
+    float radius;
+};
+
 uniform sampler2D image;
 uniform vec2 imageSize;
 uniform mat4 viewMatrix;
 uniform float time;
+
+uniform Cell cell;
 
 in vec2 texel;
 out vec4 color;
@@ -19,6 +30,6 @@ void main() {
 
     color = texture(image, texel);
 
-    if (sqrt(pow(x, 2.0) + pow(y, 2.0)) < 150.0)
+    if (sqrt(pow(x - cell.center.x, 2.0) + pow(y - cell.center.y, 2.0)) < cell.radius)
         color = mix(texture(image, texel), vec4(1, 1, 1, 1), 0.1);
 }
