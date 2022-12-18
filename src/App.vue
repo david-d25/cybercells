@@ -27,6 +27,11 @@ provide('toolsManager', ref(new ToolsManager(tools, worldState)))
 </script>
 
 <style>
+:root {
+  --default-active-bg: #00abffc9;
+  --default-active-outline: #00bbffe6;
+}
+
 body {
   margin: 0;
   font-family: sans-serif;

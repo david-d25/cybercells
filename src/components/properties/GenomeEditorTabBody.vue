@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import PropertiesTabBody from "@/components/PropertiesTabBody.vue";
-import PropertiesSection from "@/components/PropertiesSection.vue";
+import PropertiesTabBody from "@/components/properties/PropertiesTabBody.vue";
+import PropertiesSection from "@/components/properties/PropertiesSection.vue";
 
 const props = defineProps(['name'])
 </script>

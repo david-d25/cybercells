@@ -29,12 +29,12 @@
 
 <script setup lang="ts">
 import { inject } from "vue";
-import PropertiesTabbedPanel from "@/components/PropertiesTabbedPanel.vue";
-import PropertiesTab from "@/components/PropertiesTab.vue";
+import PropertiesTabbedPanel from "@/components/properties/PropertiesTabbedPanel.vue";
+import PropertiesTab from "@/components/properties/PropertiesTab.vue";
 import ToolsManager from "@/game/tool/ToolsManager";
 import ToolButton from "@/components/ToolButton.vue";
-import WorldSettingsTabBody from "@/components/WorldSettingsTabBody.vue";
-import GenomeEditorTabBody from "@/components/GenomeEditorTabBody.vue";
+import WorldSettingsTabBody from "@/components/properties/WorldSettingsTabBody.vue";
+import GenomeEditorTabBody from "@/components/properties/GenomeEditorTabBody.vue";
 
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>
