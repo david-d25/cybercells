@@ -24,8 +24,8 @@ const props = defineProps(['title'])
 
 .section-title {
   text-align: center;
-  margin-bottom: 5px;
-  color: #888;
+  margin-bottom: 15px;
+  color: rgb(190, 190, 190);
   cursor: default;
   text-transform: uppercase;
   font-size: .8em;

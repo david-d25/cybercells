@@ -1,14 +1,14 @@
 <template>
-  <button class="button" :class="{ active: activeTabName === props.name }" @click="onClick">
+  <button class="button" :class="{ active: activeTabName === name }" @click="onClick">
     <slot/>
   </button>
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, Ref } from 'vue'
 
 const props = defineProps(['name'])
-const activeTabName = inject('activeTabName', ref(null))
+const activeTabName = inject('activeTabName') as Ref<string | null>
 
 function onClick() {
   if (activeTabName.value == props.name)
@@ -18,11 +18,11 @@ function onClick() {
 }
 </script>
 
-<style>
+<style scoped>
 .button {
   border-radius: 4px;
   border: 1px solid #8e8e8e;
-  background: #2f2f2fc4;
+  background: rgba(47, 47, 47, 0.5);
   backdrop-filter: blur(5px);
   width: 40px;
   height: 40px;
@@ -32,7 +32,7 @@ function onClick() {
 }
 
 .button:hover {
-/*TODO*/
+  background: rgba(80, 80, 80, 0.6);
 }
 
 .button.active {

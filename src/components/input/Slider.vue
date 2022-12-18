@@ -31,12 +31,12 @@ watch(value, () => {
   outline: none;
   height: 25px;
   border-radius: 3px;
-  background: rgba(127, 127, 127, 0.1);
+  background: rgba(60, 60, 60, 0.75);
   margin: 0;
 }
 
 .slider-input:hover {
-  background: rgba(127, 127, 127, 0.2);
+  background: rgba(75, 75, 75, 0.75);
 }
 
 /* Don't join the next two rules, they won't work */

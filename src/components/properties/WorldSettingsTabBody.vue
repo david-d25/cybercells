@@ -1,13 +1,13 @@
 <template>
   <PropertiesTabBody :name="props.name">
     <PropertiesSection title="World settings">
-      <SliderWithNumberInput class="slider-input" min="0" max="2" step="0.001" v-model="test"/>
+      <SliderWithNumberInput class="slider-input" label="Viscosity" min="0" max="2" step="0.001" v-model="inputs.viscosity"/>
     </PropertiesSection>
   </PropertiesTabBody>
 </template>
 
 <script setup lang="ts">
-import { inject, ref, Ref } from "vue";
+import { inject, reactive, watch, Ref } from "vue";
 
 import WorldState from "@/game/state/WorldState";
 
@@ -17,7 +17,13 @@ import SliderWithNumberInput from "@/components/input/SliderWithNumberInput.vue"
 
 const props = defineProps(['name'])
 const worldState = inject('worldState') as Ref<WorldState>
-const test = ref<number>(0)
+const inputs = reactive({
+  viscosity: 0
+})
+
+watch(inputs, () => {
+  worldState.value.viscosity = inputs.viscosity
+})
 </script>
 
 <style scoped>
