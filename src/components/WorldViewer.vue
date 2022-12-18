@@ -7,6 +7,9 @@
             @mouseup="onMouseEvent"
             @mousemove="onMouseEvent"
             @mouseleave="onMouseEvent"
+            @touchstart.prevent="onTouchEvent"
+            @touchmove.prevent="onTouchEvent"
+            @touchend.prevent="onTouchEvent"
             @wheel.prevent="onWheel"/>
   </div>
 </template>
@@ -54,28 +57,52 @@ function onWheel(event: WheelEvent) {
     camera.height = 1
 }
 
+function onTouchEvent(event: TouchEvent) {
+  if (event.touches.length == 1) {
+    let mouseEventType: string | undefined
+    switch (event.type) {
+      case 'touchstart': mouseEventType = 'mousedown'; break;
+      case 'touchmove': mouseEventType = 'mousemove'; break;
+      case 'touchend': mouseEventType = 'mouseup'; break;
+    }
+    if (mouseEventType) {
+      const { clientX: x, clientY: y } = event.touches[0]
+      const dps = window.devicePixelRatio
+      const [ screenX, screenY ] = [x * dps, y * dps]
+      let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
+      const worldEvent = new WorldMouseEvent(`world-${mouseEventType}`, screenX, screenY, worldX, worldY)
+      handleDraggingEvent(worldEvent)
+      emit(worldEvent.type, worldEvent)
+    }
+  }
+}
+
 function onMouseEvent(event: MouseEvent) {
   const dps = window.devicePixelRatio
   const [ screenX, screenY ] = [event.x * dps, event.y * dps]
   let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
 
-  if (event.type === 'mousedown') {
+  const worldEvent = new WorldMouseEvent(`world-${event.type}`, screenX, screenY, worldX, worldY)
+  handleDraggingEvent(worldEvent)
+  emit(worldEvent.type, worldEvent)
+}
+
+function handleDraggingEvent(event: WorldMouseEvent) {
+  if (event.type === 'world-mousedown') {
     dragging.dragMode = true
-    dragging.lastMouseWorldPoint = [ worldX, worldY ]
+    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ]
   }
 
-  if (event.type === 'mousemove' && dragging.dragMode) {
+  if (event.type === 'world-mousemove' && dragging.dragMode) {
     const [ prevX, prevY ] = dragging.lastMouseWorldPoint
-    worldState.value.camera.center.x += prevX - worldX
-    worldState.value.camera.center.y += prevY - worldY;
-    [ worldX, worldY ] = renderer.unproject([screenX, screenY])
-    dragging.lastMouseWorldPoint = [ worldX, worldY ]
+    worldState.value.camera.center.x += prevX - event.worldX
+    worldState.value.camera.center.y += prevY - event.worldY;
+    [ event.worldX, event.worldY ] = renderer.unproject([event.screenX, event.screenY])
+    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ]
   }
 
-  if (event.type === 'mouseup' || event.type === 'mouseleave')
+  if (event.type === 'world-mouseup' || event.type === 'world-mouseleave')
     dragging.dragMode = false
-
-  emit(`world-${event.type}`, new WorldMouseEvent(`world-${event.type}`, screenX, screenY, worldX, worldY))
 }
 
 function renderingRoutine() {

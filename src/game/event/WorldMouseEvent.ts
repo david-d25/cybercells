@@ -1,9 +1,9 @@
 export default class WorldMouseEvent {
     constructor(
-        type: string,
-        screenX: number,
-        screenY: number,
-        worldX: number,
-        worldY: number
+        public type: string,
+        public screenX: number,
+        public screenY: number,
+        public worldX: number,
+        public worldY: number
     ) {}
 }
