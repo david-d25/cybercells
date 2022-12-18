@@ -10,7 +10,3 @@ import { inject, ref } from 'vue'
 const props = defineProps(['name'])
 const activeTabName = inject('activeTabName', ref(null))
 </script>
-
-<style scoped>
-
-</style>

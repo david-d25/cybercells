@@ -12,11 +12,16 @@ import GenomeLibrary from "@/game/GenomeLibrary";
 import WorldState from "@/game/state/WorldState";
 import AppPreferences from "@/AppPreferences";
 import ToolsManager from "@/game/tool/ToolsManager";
+import AddCellTool from "@/game/tool/AddCellTool";
+import RemoveCellTool from "@/game/tool/RemoveCellTool";
 
-provide('worldState', ref<WorldState>(WorldState.TEMPORARY_DEBUG))
+const tools = [ new AddCellTool(), new RemoveCellTool() ]
+const worldState = WorldState.TEMPORARY_DEBUG
+
+provide('worldState', ref<WorldState>(worldState))
 provide('genomeLibrary', ref<GenomeLibrary>(new GenomeLibrary()))
 provide('appPreferences', ref<AppPreferences>(new AppPreferences()))
-provide('toolsManager', ref(new ToolsManager()))
+provide('toolsManager', ref(new ToolsManager(tools, worldState)))
 
 // todo provide updater
 </script>

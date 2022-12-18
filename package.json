@@ -53,6 +53,10 @@
     "not dead",
     "not ie 11"
   ],
+  "engines": {
+    "node": "18.12.1",
+    "npm": "8.19.3"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
