@@ -1,18 +1,30 @@
 <template>
   <div class="slider-container">
-    <input class="slider-input" type="range" :min="min" :max="max" :step="step" v-model="value">
+    <input class="slider-input"
+           type="range"
+           :min="min"
+           :max="max"
+           :step="step"
+           v-model="value">
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-const props = defineProps(['min', 'max', 'step', 'modelValue'])
+const props = defineProps<{
+  min?: number,
+  max?: number,
+  step?: number,
+  modelValue?: number
+}>()
+
 const emit = defineEmits(['update:modelValue'])
 const value = ref<number>(0)
 
 watch(props, () => {
-  value.value = props.modelValue
+  if (props.modelValue)
+    value.value = props.modelValue
 })
 
 watch(value, () => {
@@ -45,14 +57,15 @@ watch(value, () => {
   width: 20px;
   height: 25px;
   background: rgb(178, 178, 178);
+  border: 1px solid rgb(120, 120, 120);
   border-radius: 3px;
-  border: none;
 }
 .slider-input::-webkit-slider-thumb {
   appearance: none;
   width: 20px;
   height: 25px;
   background: rgb(178, 178, 178);
+  border: 1px solid rgb(120, 120, 120);
   border-radius: 3px;
 }
 

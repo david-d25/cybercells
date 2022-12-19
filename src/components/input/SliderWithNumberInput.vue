@@ -2,10 +2,10 @@
   <div class="slider-with-number-input-wr">
     <div class="label" v-if="label">{{label}}</div>
     <div class="slider-with-number-input">
-      <Slider class="slider" :min="min" :max="max" :step="step" v-model="value"/>
+      <Slider class="slider" :min="min" :max="max" :step="step" v-model.number="value"/>
       <input class="text-input"
              type="text"
-             v-model="value"
+             v-model.number="value"
              ref="textInput"
              @focus="textInput.select()"
              @keydown.enter="textInput.blur()"
@@ -18,13 +18,21 @@
 import { ref, watch } from "vue";
 import Slider from "@/components/input/Slider.vue";
 
-const props = defineProps(['min', 'max', 'step', 'modelValue', 'label'])
+const props = defineProps<{
+  min?: number,
+  max?: number,
+  step?: number,
+  modelValue?: number,
+  vertical?: boolean,
+  label?: string
+}>()
 const emit = defineEmits(['update:modelValue'])
 const textInput = ref<HTMLInputElement>()
 const value = ref<number>(0)
 
 watch(props, () => {
-  value.value = props.modelValue
+  if (props.modelValue)
+    value.value = props.modelValue
 })
 
 watch(value, () => {

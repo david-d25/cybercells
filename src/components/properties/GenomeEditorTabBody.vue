@@ -1,7 +1,7 @@
 <template>
   <PropertiesTabBody :name="name">
     <PropertiesSection>
-      GENOME EDITOR
+      There will be a genome editor someday...
     </PropertiesSection>
   </PropertiesTabBody>
 </template>
