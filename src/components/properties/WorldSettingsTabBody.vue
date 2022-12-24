@@ -1,9 +1,14 @@
 <template>
   <PropertiesTabBody :name="props.name">
     <PropertiesSection title="World settings">
-      <SliderWithNumberInput class="slider-input" label="Gravity" :min="0" :max="2" :step="0.01" v-model.number="inputs.gravity"/>
-      <SliderWithNumberInput class="slider-input" label="Density" :min="0" :max="1.5" :step="0.01" v-model.number="inputs.density"/>
-      <SliderWithNumberInput class="slider-input" label="Viscosity" :min="0" :max="0.8" :step="0.01" v-model.number="inputs.viscosity"/>
+      <InputLabel>Gravity</InputLabel>
+      <SliderWithNumberInput class="slider-input" :min="0" :max="2" :step="0.01" v-model.number="inputs.gravity"/>
+
+      <InputLabel>Density</InputLabel>
+      <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="inputs.density"/>
+
+      <InputLabel>Viscosity</InputLabel>
+      <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="inputs.viscosity"/>
     </PropertiesSection>
   </PropertiesTabBody>
 </template>
@@ -17,6 +22,7 @@ import PropertiesTabBody from "@/components/properties/PropertiesTabBody.vue";
 import PropertiesSection from "@/components/properties/PropertiesSection.vue";
 import SliderWithNumberInput from "@/components/input/SliderWithNumberInput.vue";
 import Vector2 from "@/geom/Vector2";
+import InputLabel from "@/components/input/InputLabel.vue";
 
 const props = defineProps(['name'])
 const worldState = inject('worldState') as Ref<WorldState>

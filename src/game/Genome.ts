@@ -25,6 +25,22 @@ export default class Genome {
         // TODO
     }
 
+    static newSampleGenome(): Genome {
+        const result = new Genome();
+        result.type = CellType.FLAGELLOCYTE;
+        [result.cyanPigment, result.magentaPigment, result.yellowPigment] = this.randomSaturatedCmyColor();
+        return result
+    }
+
+    private static randomSaturatedCmyColor(): [number, number, number] {
+        const cmy: [number, number, number] = [1, 0, Math.random()]
+        for (let i = 0; i < cmy.length; i++) {
+            const randomIndex = Math.floor(Math.random() * cmy.length);
+            [cmy[i], cmy[randomIndex]] = [cmy[randomIndex], cmy[i]];
+        }
+        return cmy
+    }
+
     private copyRecursive(copies: Map<Genome, Genome> = new Map().set(null, null)): Genome {
         const result = new Genome()
         result.type = this.type

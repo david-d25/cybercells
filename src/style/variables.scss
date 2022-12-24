@@ -1,0 +1,16 @@
+:root {
+  --tools-button-bg__active: #00abffc9;
+  --tools-button-outline__active: #00bbffe6;
+
+  --properties-button-bg: rgba(75, 74, 74, 0.75);
+  --properties-button-bg__hover: rgba(96, 96, 96, 0.75);
+  --properties-button-bg__active: rgba(131, 131, 131, 0.75);
+  --properties-button-outline: rgba(120, 120, 120, 0.75);
+
+  --properties-input-bg: rgba(60, 60, 60, 0.75);
+  --properties-input-bg__hover: rgba(75, 75, 75, 0.75);
+  --properties-input-color: rgb(178, 178, 178);
+  --properties-input-bg__focused: rgba(80, 80, 80, 0.75);
+  --properties-input-color__focused: rgb(225, 225, 225);
+  --properties-input-label-color: rgb(150, 150, 150);
+}

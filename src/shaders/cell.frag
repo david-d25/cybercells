@@ -1,6 +1,7 @@
 #version 300 es
 
 precision highp float;
+precision highp sampler2D;
 
 const float CELL_BORDER_WIDTH = 2.0;
 

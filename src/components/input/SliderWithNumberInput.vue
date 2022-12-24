@@ -1,6 +1,5 @@
 <template>
   <div class="slider-with-number-input-wr">
-    <div class="label" v-if="label">{{label}}</div>
     <div class="slider-with-number-input">
       <Slider class="slider" :min="min" :max="max" :step="step" v-model.number="value"/>
       <input class="text-input"
@@ -16,15 +15,14 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import Slider from "@/components/input/Slider.vue";
+import Slider from "@/components/input/NumberSlider.vue";
 
 const props = defineProps<{
   min?: number,
   max?: number,
   step?: number,
   modelValue?: number,
-  vertical?: boolean,
-  label?: string
+  vertical?: boolean
 }>()
 const emit = defineEmits(['update:modelValue'])
 const textInput = ref<HTMLInputElement>()
@@ -59,26 +57,19 @@ watch(value, () => {
   border-radius: 3px;
   text-align: center;
   box-sizing: border-box;
-  background: rgba(60, 60, 60, 0.75);
-  color: rgb(178, 178, 178);
+  background: var(--properties-input-bg);
+  color: var(--properties-input-color);
   transition: width .2s ease-in-out;
 }
 
 .text-input:hover {
-  background: rgba(75, 75, 75, 0.75);
+  background: var(--properties-input-bg__hover);
 }
 
 .text-input:focus {
-  outline: 1px solid var(--default-active-outline);
-  background: rgba(80, 80, 80, 0.75);
-  color: rgb(225, 225, 225);
+  outline: 1px solid var(--tools-button-outline__active);
+  background: var(--properties-input-bg__focused);
+  color: var(--properties-input-color__focused);
   width: 100px;
-}
-
-.label {
-  color: rgb(150, 150, 150);
-  font-size: 0.8em;
-  margin-bottom: 1px;
-  cursor: default;
 }
 </style>

@@ -1,6 +1,7 @@
 #version 300 es
 
 precision highp float;
+precision highp sampler2D;
 
 const float CHECKER_SIZE = 25.0;
 

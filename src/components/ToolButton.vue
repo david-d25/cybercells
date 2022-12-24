@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps(['active'])
+defineProps<{ active: boolean }>()
 </script>
 
 <style scoped>
@@ -20,7 +20,7 @@ const props = defineProps(['active'])
 }
 
 .button.active {
-  border: 1px solid #00bbffe6;
-  background: #00abffc9;
+  border: 1px solid var(--tools-button-outline__active);
+  background: var(--tools-button-bg__active);
 }
 </style>

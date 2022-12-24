@@ -4,10 +4,10 @@
     <PropertiesTabbedPanel class="properties-container">
       <template #tabs>
         <PropertiesTab class="properties-tab" name="genome-editor">
-
+          <img class="properties-tab__icon" src="@public/texture-placeholder.jpg" alt="Tab icon">
         </PropertiesTab>
         <PropertiesTab class="properties-tab" name="settings">
-          <img class="properties-tab-icon" src="/icons/settings.svg" alt="icon">
+          <img class="properties-tab__icon" src="@public/icons/settings.svg" alt="Tab icon">
         </PropertiesTab>
       </template>
       <template #bodies>
@@ -21,7 +21,9 @@
                   v-for="tool in toolsManager.tools"
                   :key="tool.id"
                   :active="toolsManager.currentTool === tool"
-                  @click="toolsManager.currentTool = tool"/>
+                  @click="toolsManager.currentTool = tool">
+        <img class="tool-button__icon" src="@public/texture-placeholder.jpg" alt="Tool icon">
+      </ToolButton>
     </div>
 
   </div>
@@ -39,7 +41,7 @@ import GenomeEditorTabBody from "@/components/properties/GenomeEditorTabBody.vue
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .properties-container {
   position: fixed;
   right: 0;
@@ -63,7 +65,12 @@ const toolsManager = inject('toolsManager') as ToolsManager;
 }
 
 .tool-button {
+  padding: 5px;
   margin-bottom: 10px;
+
+  .tool-button__icon {
+    width: 100%;
+  }
 }
 
 .tool-button:last-child {
@@ -74,7 +81,7 @@ const toolsManager = inject('toolsManager') as ToolsManager;
   padding: 5px;
 }
 
-.properties-tab-icon {
+.properties-tab__icon {
   width: 100%;
 }
 </style>

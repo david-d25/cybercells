@@ -43,12 +43,12 @@ watch(value, () => {
   outline: none;
   height: 25px;
   border-radius: 3px;
-  background: rgba(60, 60, 60, 0.75);
+  background: var(--properties-input-bg);
   margin: 0;
 }
 
 .slider-input:hover {
-  background: rgba(75, 75, 75, 0.75);
+  background: var(--properties-input-bg__hover);
 }
 
 /* Don't join the next two rules, they won't work */
@@ -78,6 +78,6 @@ watch(value, () => {
 }
 
 .slider-input:focus {
-  outline: 1px solid var(--default-active-outline);
+  outline: 1px solid var(--tools-button-outline__active);
 }
 </style>
