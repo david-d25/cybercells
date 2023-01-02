@@ -1,5 +1,5 @@
 <template>
-  <PropertiesTabBody :name="props.name">
+  <PropertiesTabBody :name="props.name" class="c-world-settings-tab-body">
     <PropertiesSection title="World settings">
       <InputLabel>Gravity</InputLabel>
       <SliderWithNumberInput class="slider-input" :min="0" :max="2" :step="0.01" v-model.number="inputs.gravity"/>
@@ -40,13 +40,15 @@ watch(inputs, () => {
 })
 </script>
 
-<style scoped>
-.slider-input {
-  width: 100%;
-  margin-bottom: 5px;
-}
+<style lang="scss">
+.c-world-settings-tab-body {
+  .slider-input {
+    width: 100%;
+    margin-bottom: 5px;
+  }
 
-.slider-input:last-child {
-  margin-bottom: 0;
+  .slider-input:last-child {
+    margin-bottom: 0;
+  }
 }
 </style>

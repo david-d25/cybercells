@@ -1,13 +1,13 @@
 <template>
-  <button class="button" :class="{ active }"><slot/></button>
+  <button class="c-button" :class="{ active }"><slot/></button>
 </template>
 
 <script setup lang="ts">
 defineProps<{ active: boolean }>()
 </script>
 
-<style scoped>
-.button {
+<style lang="scss">
+.c-button {
   border-radius: 4px;
   border: 1px solid #8e8e8e;
   background: #2f2f2fc4;
@@ -17,10 +17,10 @@ defineProps<{ active: boolean }>()
   margin-left: 10px;
   padding: 0;
   cursor: pointer;
-}
 
-.button.active {
-  border: 1px solid var(--tools-button-outline__active);
-  background: var(--tools-button-bg__active);
+  &.active {
+    border: 1px solid var(--tools-button-outline__active);
+    background: var(--tools-button-bg__active);
+  }
 }
 </style>

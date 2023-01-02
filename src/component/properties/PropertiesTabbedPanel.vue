@@ -1,5 +1,5 @@
 <template>
-  <div class="tabbed-panel-wr">
+  <div class="c-tabbed-panel">
     <div class="tabbed-panel" draggable="false" :style="{ width: `${width}px`, minWidth: `${minWidth}px` }">
       <div class="tabs">
         <slot name="tabs"/>
@@ -52,36 +52,38 @@ function stopHandleDragging() {
 }
 </script>
 
-<style scoped>
-.tabbed-panel {
-  pointer-events: all;
-}
+<style lang="scss">
+.c-tabbed-panel {
+  .tabbed-panel {
+    pointer-events: all;
+  }
 
-.tabs {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: flex-end;
-  align-items: center;
-  margin-right: 15px;
-  margin-top: 15px;
-}
+  .tabs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 15px;
+    margin-top: 15px;
+  }
 
-.body {
-  margin: 15px;
-  position: relative;
-}
+  .body {
+    margin: 15px;
+    position: relative;
+  }
 
-.resize-handle {
-  border-radius: 20px;
-  user-select: none;
-  width: 10px;
-  position: absolute;
-  cursor: ew-resize;
-  margin: auto;
-  bottom: 0;
-  left: -5px;
-  top: 0;
+  .resize-handle {
+    border-radius: 20px;
+    user-select: none;
+    width: 10px;
+    position: absolute;
+    cursor: ew-resize;
+    margin: auto;
+    bottom: 0;
+    left: -5px;
+    top: 0;
+  }
 }
 </style>
