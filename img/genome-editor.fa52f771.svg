@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 100 100" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<path d="M33.4211 11C30.9794 11 29 12.7909 29 15C29 17.2091 30.9794 19 33.4211 19L66.5789 19C69.0206 19 71 17.2091 71 15C71 12.7909 69.0206 11 66.5789 11L33.4211 11Z" id="Fill"/>
+<linearGradient gradientTransform="matrix(1.10526 0 0 1 -5.26316 0)" gradientUnits="userSpaceOnUse" id="LinearGradient" x1="31" x2="69" y1="15" y2="15">
+<stop offset="0.480616" stop-color="#5c7eff"/>
+<stop offset="0.540881" stop-color="#ffba5f"/>
+</linearGradient>
+<path d="M33.4211 82C30.9794 82 29 83.7909 29 86C29 88.2091 30.9794 90 33.4211 90L66.5789 90C69.0206 90 71 88.2091 71 86C71 83.7909 69.0206 82 66.5789 82L33.4211 82Z" id="Fill_2"/>
+<linearGradient gradientTransform="matrix(1.10526 0 0 1 -5.26316 0)" gradientUnits="userSpaceOnUse" id="LinearGradient_2" x1="31" x2="69" y1="86" y2="86">
+<stop offset="0.476545" stop-color="#82ff52"/>
+<stop offset="0.53177" stop-color="#ff5b5b"/>
+</linearGradient>
+<path d="M20 6.40625C17.7909 6.40625 16 8.19711 16 10.4062L16 20.1875C16 26.9373 20.3213 35.0059 25.9375 38.75L69.4688 67.7812C72.9512 70.1029 76 75.8146 76 80L76 90C76 92.2091 77.7909 94 80 94C82.2091 94 84 92.2091 84 90L84 80C84 73.1397 79.6143 64.9304 73.9062 61.125L30.375 32.0938C26.9844 29.8334 24 24.2625 24 20.1875L24 10.4062C24 8.19711 22.2091 6.40625 20 6.40625Z" id="Fill_3"/>
+<path d="M80 6.40625C77.7909 6.40625 76 8.19711 76 10.4062L76 20.1875C76 24.2625 73.0156 29.8334 69.625 32.0938L53.625 42.7812L60.8125 47.5938L74.0625 38.75C79.6787 35.0059 84 26.9373 84 20.1875L84 10.4062C84 8.19711 82.2091 6.40625 80 6.40625ZM39.1875 52.4062L25.9375 61.25C20.3213 64.9941 16 73.0627 16 79.8125L16 90C16 92.2091 17.7909 94 20 94C22.2091 94 24 92.2091 24 90L24 79.8125C24 75.7375 26.9844 70.1667 30.375 67.9062L46.4062 57.2188L39.1875 52.4062Z" id="Fill_4"/>
+<path d="M40 24C37.7909 24 36 25.7909 36 28C36 30.2091 37.7909 32 40 32L60 32C62.2091 32 64 30.2091 64 28C64 25.7909 62.2091 24 60 24L40 24Z" id="Fill_5"/>
+<linearGradient gradientTransform="matrix(1 0 0 1 0 0)" gradientUnits="userSpaceOnUse" id="LinearGradient_3" x1="36" x2="64" y1="28" y2="28">
+<stop offset="0.47341" stop-color="#ff5b5b"/>
+<stop offset="0.533467" stop-color="#82ff52"/>
+</linearGradient>
+<path d="M40 68C37.7909 68 36 69.7909 36 72C36 74.2091 37.7909 76 40 76L60 76C62.2091 76 64 74.2091 64 72C64 69.7909 62.2091 68 60 68L40 68Z" id="Fill_6"/>
+<linearGradient gradientTransform="matrix(1 0 0 1 0 0)" gradientUnits="userSpaceOnUse" id="LinearGradient_4" x1="36" x2="64" y1="72" y2="72">
+<stop offset="0.46532" stop-color="#ffba5f"/>
+<stop offset="0.5264" stop-color="#5c7eff"/>
+</linearGradient>
+</defs>
+<clipPath id="ArtboardFrame">
+<rect height="100" width="100" x="0" y="0"/>
+</clipPath>
+<g clip-path="url(#ArtboardFrame)" id="bg" vectornator:layerName="bg" visibility="hidden">
+<path d="M3.55271e-15 0L100.52 0L100 100L0 100L3.55271e-15 0Z" fill="#292929" fill-rule="nonzero" opacity="1" stroke="none"/>
+</g>
+<g id="Layer-2" vectornator:layerName="Layer 2">
+<g opacity="1">
+<use fill="url(#LinearGradient)" fill-rule="nonzero" stroke="none" xlink:href="#Fill"/>
+<mask height="10" id="StrokeMask" maskUnits="userSpaceOnUse" width="44" x="28" y="10">
+<rect fill="#ffffff" height="10" stroke="none" width="44" x="28" y="10"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill"/>
+</g>
+<g opacity="1">
+<use fill="url(#LinearGradient_2)" fill-rule="nonzero" stroke="none" xlink:href="#Fill_2"/>
+<mask height="10" id="StrokeMask_2" maskUnits="userSpaceOnUse" width="44" x="28" y="81">
+<rect fill="#ffffff" height="10" stroke="none" width="44" x="28" y="81"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill_2"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask_2)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill_2"/>
+</g>
+<g opacity="1">
+<use fill="#cccccc" fill-rule="nonzero" stroke="none" xlink:href="#Fill_3"/>
+<mask height="89.5938" id="StrokeMask_3" maskUnits="userSpaceOnUse" width="70" x="15" y="5.40625">
+<rect fill="#ffffff" height="89.5938" stroke="none" width="70" x="15" y="5.40625"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill_3"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask_3)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill_3"/>
+</g>
+<g opacity="1">
+<use fill="#cccccc" fill-rule="nonzero" stroke="none" xlink:href="#Fill_4"/>
+<mask height="89.5938" id="StrokeMask_4" maskUnits="userSpaceOnUse" width="70" x="15" y="5.40625">
+<rect fill="#ffffff" height="89.5938" stroke="none" width="70" x="15" y="5.40625"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill_4"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask_4)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill_4"/>
+</g>
+<g opacity="1">
+<use fill="url(#LinearGradient_3)" fill-rule="nonzero" stroke="none" xlink:href="#Fill_5"/>
+<mask height="10" id="StrokeMask_5" maskUnits="userSpaceOnUse" width="30" x="35" y="23">
+<rect fill="#ffffff" height="10" stroke="none" width="30" x="35" y="23"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill_5"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask_5)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill_5"/>
+</g>
+<g opacity="1">
+<use fill="url(#LinearGradient_4)" fill-rule="nonzero" stroke="none" xlink:href="#Fill_6"/>
+<mask height="10" id="StrokeMask_6" maskUnits="userSpaceOnUse" width="30" x="35" y="67">
+<rect fill="#ffffff" height="10" stroke="none" width="30" x="35" y="67"/>
+<use fill="#000000" fill-rule="evenodd" stroke="none" xlink:href="#Fill_6"/>
+</mask>
+<use fill="none" mask="url(#StrokeMask_6)" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" xlink:href="#Fill_6"/>
+</g>
+</g>
+</svg>
