@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 100 100" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<g id="Layer-1" vectornator:layerName="Layer 1">
+<g opacity="1">
+<path d="M28.2014 79.4376L27.903 15.3015L80 59.0508L56.8332 58.6113L67.2876 78.655L54.7822 85.3808L44.4376 63.4642L28.2014 79.4376Z" fill="#e8e8e8" fill-rule="nonzero" opacity="1" stroke="#2d2d2d" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="3"/>
+<g opacity="1">
+<clipPath id="ClipPath">
+<path d="M23.5775 8.15435L6.2071 78.7796L76.8323 96.15L94.2027 25.5248L23.5775 8.15435ZM27.903 15.3015L76.1603 40.565L55.3712 48.8464L74.4191 80.3202L63.9278 86.6695L44.8799 55.1957L27.9004 69.7718L27.903 15.3015Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath)"/>
+</g>
+</g>
+</g>
+</svg>

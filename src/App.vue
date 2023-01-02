@@ -15,8 +15,9 @@ import ToolsManager from "@/game/tool/ToolsManager";
 import AddCellTool from "@/game/tool/AddCellTool";
 import RemoveCellTool from "@/game/tool/RemoveCellTool";
 import Genome from "@/game/Genome";
+import SelectionTool from "@/game/tool/SelectionTool";
 
-const tools = [ new AddCellTool(), new RemoveCellTool() ]
+const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ]
 const worldState = WorldState.TEMPORARY_DEBUG
 
 const genomeLibrary = new GenomeLibrary()

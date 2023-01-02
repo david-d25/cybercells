@@ -4,10 +4,10 @@
     <PropertiesTabbedPanel class="properties-container">
       <template #tabs>
         <PropertiesTab class="properties-tab" name="genome-editor">
-          <img class="properties-tab__icon" src="@public/icons/genome-editor.svg" alt="Tab icon">
+          <img class="properties-tab__icon" src="@public/icon/properties/genome-editor.svg" alt="Tab icon">
         </PropertiesTab>
         <PropertiesTab class="properties-tab" name="settings">
-          <img class="properties-tab__icon" src="@public/icons/settings.svg" alt="Tab icon">
+          <img class="properties-tab__icon" src="@public/icon/properties/settings.svg" alt="Tab icon">
         </PropertiesTab>
       </template>
       <template #bodies>
@@ -22,7 +22,7 @@
                   :key="tool.name"
                   :active="toolsManager.currentTool === tool"
                   @click="toolsManager.currentTool = tool">
-        <img class="tool-button__icon" src="@public/texture-placeholder.jpg" alt="Tool icon">
+        <img class="tool-button__icon" :src="tool.icon" alt="Tool icon">
       </ToolButton>
     </div>
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 100 100" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs/>
+<g id="Layer-1" vectornator:layerName="Layer 1">
+<g opacity="1">
+<path d="M11.2129 48.4102C11.2129 31.8416 24.6444 18.4102 41.2129 18.4102C57.7815 18.4102 71.2129 31.8416 71.2129 48.4102C71.2129 64.9787 57.7815 78.4102 41.2129 78.4102C24.6444 78.4102 11.2129 64.9787 11.2129 48.4102Z" fill="#e8e8e8" fill-rule="nonzero" opacity="1" stroke="none"/>
+<g opacity="1">
+<clipPath id="ClipPath">
+<path d="M6.21875 13.4062L6.21875 83.4062L76.2188 83.4062L76.2188 13.4062L6.21875 13.4062ZM41.2188 18.4062C57.7874 18.4062 71.2187 31.8377 71.2188 48.4062C71.2188 64.9748 57.7874 78.4062 41.2188 78.4062C24.6503 78.4062 11.2187 64.9747 11.2188 48.4062C11.2188 31.8377 24.6503 18.4063 41.2188 18.4062Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath)">
+<path d="M11.2129 48.4102C11.2129 31.8416 24.6444 18.4102 41.2129 18.4102C57.7815 18.4102 71.2129 31.8416 71.2129 48.4102C71.2129 64.9787 57.7815 78.4102 41.2129 78.4102C24.6444 78.4102 11.2129 64.9787 11.2129 48.4102Z" fill="none" opacity="1" stroke="#2d2d2d" stroke-linecap="butt" stroke-linejoin="miter" stroke-width="10"/>
+</g>
+</g>
+</g>
+<path d="M31.2129 48.4102C31.2129 42.8873 35.6901 38.4102 41.2129 38.4102C46.7358 38.4102 51.2129 42.8873 51.2129 48.4102C51.2129 53.933 46.7358 58.4102 41.2129 58.4102C35.6901 58.4102 31.2129 53.933 31.2129 48.4102Z" fill="#343434" fill-rule="nonzero" opacity="1" stroke="none"/>
+</g>
+<g id="Layer-2" vectornator:layerName="Layer 2">
+<path d="M94.3684 63.0451L94.3684 81.0451L44.3684 81.0451L44.3684 63.0451L94.3684 63.0451Z" fill="#cf4d4d" fill-rule="nonzero" opacity="1" stroke="none"/>
+</g>
+</svg>
