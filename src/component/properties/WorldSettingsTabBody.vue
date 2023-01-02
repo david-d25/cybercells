@@ -18,11 +18,11 @@ import { inject, reactive, watch, Ref } from "vue";
 
 import WorldState from "@/game/state/WorldState";
 
-import PropertiesTabBody from "@/components/properties/PropertiesTabBody.vue";
-import PropertiesSection from "@/components/properties/PropertiesSection.vue";
-import SliderWithNumberInput from "@/components/input/SliderWithNumberInput.vue";
+import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
+import PropertiesSection from "@/component/properties/PropertiesSection.vue";
+import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import Vector2 from "@/geom/Vector2";
-import InputLabel from "@/components/input/InputLabel.vue";
+import InputLabel from "@/component/input/InputLabel.vue";
 
 const props = defineProps(['name'])
 const worldState = inject('worldState') as Ref<WorldState>

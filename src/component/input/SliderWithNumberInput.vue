@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import Slider from "@/components/input/NumberSlider.vue";
+import Slider from "@/component/input/NumberSlider.vue";
 
 const props = defineProps<{
   min?: number,

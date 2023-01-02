@@ -2,6 +2,8 @@ import Tool from "@/game/tool/Tool";
 import ToolsManager from "@/game/tool/ToolsManager";
 
 export default class AddCellTool implements Tool {
+    name = "Add cell"
+
     private toolsManager: ToolsManager | null = null;
 
     init(toolsManager: ToolsManager) {

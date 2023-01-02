@@ -1,5 +1,5 @@
 <template>
-  <div class="viewer-wr" ref="containerRef">
+  <div class="c-world-viewer" ref="containerRef">
     <canvas class="canvas"
             ref="canvasRef"
             @click="onMouseEvent"
@@ -119,10 +119,14 @@ function onCanvasResize() {
 }
 </script>
 
-<style>
-.canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
+<style lang="scss">
+.c-world-viewer {
+  height: 100vh;
+
+  .canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

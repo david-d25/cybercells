@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import {ref, watch} from "vue";
 import GenomeLibrary, {GenomeLibraryEntry} from "@/game/GenomeLibrary";
-import InputLabel from "@/components/input/InputLabel.vue";
+import InputLabel from "@/component/input/InputLabel.vue";
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
