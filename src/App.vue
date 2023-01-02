@@ -21,10 +21,10 @@ const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ]
 const worldState = WorldState.TEMPORARY_DEBUG
 
 const genomeLibrary = new GenomeLibrary()
-genomeLibrary.entries.add(new GenomeLibraryEntry("test1", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("test2", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("test3", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("test4", Genome.newSampleGenome()))
+genomeLibrary.entries.add(new GenomeLibraryEntry("my genome", Genome.newSampleGenome()))
+genomeLibrary.entries.add(new GenomeLibraryEntry("test", Genome.newSampleGenome()))
+genomeLibrary.entries.add(new GenomeLibraryEntry("aaaaaaaaa", Genome.newSampleGenome()))
+genomeLibrary.entries.add(new GenomeLibraryEntry("aboba", Genome.newSampleGenome()))
 
 provide('worldState', ref<WorldState>(worldState))
 provide('genomeLibrary', ref<GenomeLibrary>(genomeLibrary))
