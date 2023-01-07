@@ -19,11 +19,19 @@ export default class WorldRenderer {
     private sourceBufferTexture: WebGLTexture | null = null
     private targetBufferTexture: WebGLTexture | null = null
 
+    public config = {
+        layers: {
+            background: true,
+            walls: true,
+            cells: true
+        }
+    }
+
     private constructor(
         private shaderManager: ShaderManager,
         private backgroundShader: WebGLShader,
         private cellShader: WebGLShader,
-        private worldState: WorldState
+        public worldState: WorldState | null = null
     ) {
         this.mainMesh = this.createMainMesh()
         this.drawBufferTextureUv = this.createDrawBufferTextureUv()
@@ -31,7 +39,7 @@ export default class WorldRenderer {
         this.autoUpdateDrawBufferTexture()
     }
 
-    static init(canvas: HTMLCanvasElement, worldState: WorldState): WorldRenderer {
+    static init(canvas: HTMLCanvasElement, worldState: WorldState | null = null): WorldRenderer {
         const shaderManager = ShaderManager.init(canvas);
 
         const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource)
@@ -41,7 +49,7 @@ export default class WorldRenderer {
 
     render() {
         const gl = this.shaderManager.gl
-        gl.clearColor(0, 0, 0, 1)
+        gl.clearColor(0, 0, 0, 0)
         gl.clearDepth(1)
         gl.enable(gl.DEPTH_TEST)
         gl.depthFunc(gl.LEQUAL)
@@ -49,8 +57,10 @@ export default class WorldRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
 
-        this.renderBackground()
-        this.renderCells()
+        if (this.config.layers.background)
+            this.renderBackground()
+        if (this.config.layers.cells)
+            this.renderCells()
     }
 
     /**
@@ -70,6 +80,9 @@ export default class WorldRenderer {
     }
 
     private renderCells() {
+        if (!this.worldState)
+            return
+
         const gl = this.shaderManager.gl
         gl.useProgram(this.cellShader)
 
@@ -108,6 +121,9 @@ export default class WorldRenderer {
     }
 
     private renderBackground() {
+        if (!this.worldState)
+            return
+
         const gl = this.shaderManager.gl
         gl.useProgram(this.backgroundShader)
 
@@ -134,6 +150,9 @@ export default class WorldRenderer {
     }
 
     private buildCameraTransform(): mat4 {
+        if (!this.worldState)
+            throw new Error("Can't build camera transform: the world state is not set in renderer!")
+
         const canvasWidth = this.shaderManager.gl.canvas.width
         const canvasHeight = this.shaderManager.gl.canvas.height
 

@@ -20,6 +20,10 @@ export default class WorldState {
     public cells: Map<number, CellState> = new Map()
     public walls: Map<number, WallState> = new Map()
 
+    public static getDefault() {
+        return new WorldState(0, 0, new Vector2(), 0, 0, 0)
+    }
+
     static NULL = new WorldState(0, 0, new Vector2(), 0, 0,0)
 
     static TEMPORARY_DEBUG = (() => {

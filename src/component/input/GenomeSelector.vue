@@ -5,7 +5,7 @@
       <InputLabel>Genome to edit</InputLabel>
 
       <div class="select-head">
-        <div class="select-head__preview" v-if="value"></div>
+        <CellGenomePreview class="select-head__preview" v-if="value" :genome="modelValue?.genome"/>
         <input class="select-head__name-input"
                placeholder="Select genome"
                v-model="nameInput"
@@ -20,7 +20,9 @@
              v-for="item in libraryEntriesFiltered"
              :key="item.name"
              @click="() => select(item)">
-          <div class="dropdown-item__preview"></div>
+          <div class="dropdown-item__preview-wr">
+            <CellGenomePreview class="dropdown-item__preview" :genome="item.genome"/>
+          </div>
           <div class="dropdown-item__name">
             {{item.name}}
           </div>
@@ -37,6 +39,7 @@
 import {computed, ref, watch} from "vue";
 import GenomeLibrary, {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 import InputLabel from "@/component/input/InputLabel.vue";
+import CellGenomePreview from "@/component/CellGenomePreview.vue";
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
@@ -105,7 +108,6 @@ function resetNameInput() {
   }
 
   .select-head__preview {
-    background: url('@public/texture-placeholder.jpg') repeat center / cover;
     width: 28px;
     height: 28px;
   }
@@ -128,7 +130,7 @@ function resetNameInput() {
   .select-head__dropdown-trigger {
     height: 100%;
     width: 28px;
-    border: 1px solid var(--properties-button-outline);
+    border: none;
     background: var(--properties-button-bg);
     border-radius: 0 3px 3px 0;
     cursor: pointer;
@@ -157,7 +159,7 @@ function resetNameInput() {
   }
 
   .dropdown {
-    min-height: 100px;
+    min-height: 15px;
     width: 100%;
     position: absolute;
     border-radius: 0 0 3px 3px;
@@ -176,10 +178,14 @@ function resetNameInput() {
     }
   }
 
-  .dropdown-item__preview {
-    background: url('@public/texture-placeholder.jpg') repeat center / cover;
+  .dropdown-item__preview-wr {
     width: 28px;
     height: 28px;
+  }
+
+  .dropdown-item__preview {
+    width: 100%;
+    height: 100%;
   }
 
   .dropdown-item {
