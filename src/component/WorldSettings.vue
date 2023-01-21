@@ -1,16 +1,14 @@
 <template>
-  <PropertiesTabBody :name="props.name" class="c-world-settings-tab-body">
-    <PropertiesSection title="World settings">
-      <InputLabel>Gravity</InputLabel>
-      <SliderWithNumberInput class="slider-input" :min="0" :max="2" :step="0.01" v-model.number="inputs.gravity"/>
+  <PropertiesSection class="c-world-settings-tab-body" title="World settings">
+    <InputLabel>Gravity</InputLabel>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="2" :step="0.01" v-model.number="inputs.gravity"/>
 
-      <InputLabel>Density</InputLabel>
-      <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="inputs.density"/>
+    <InputLabel>Density</InputLabel>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="inputs.density"/>
 
-      <InputLabel>Viscosity</InputLabel>
-      <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="inputs.viscosity"/>
-    </PropertiesSection>
-  </PropertiesTabBody>
+    <InputLabel>Viscosity</InputLabel>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="inputs.viscosity"/>
+  </PropertiesSection>
 </template>
 
 <script setup lang="ts">
@@ -18,13 +16,11 @@ import { inject, reactive, watch, Ref } from "vue";
 
 import WorldState from "@/game/state/WorldState";
 
-import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
 import PropertiesSection from "@/component/properties/PropertiesSection.vue";
 import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import Vector2 from "@/geom/Vector2";
 import InputLabel from "@/component/input/InputLabel.vue";
 
-const props = defineProps(['name'])
 const worldState = inject('worldState') as Ref<WorldState>
 const inputs = reactive({
   gravity: 0,

@@ -1,5 +1,5 @@
 <template>
-  <div class="c-cell-genome-preview" ref="container">
+  <div class="c-cell-genome-preview">
     <canvas class="canvas" ref="canvas"/>
   </div>
 </template>
@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import Genome from "@/game/Genome";
 import WorldRenderer from "@/render/WorldRenderer";
-import {onMounted, Ref, ref, watch} from "vue";
+import {onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
 import WorldState from "@/game/state/WorldState";
 import Vector2 from "@/geom/Vector2";
 import Camera from "@/game/Camera";
@@ -18,15 +18,20 @@ const props = defineProps<{
 }>();
 
 const canvas = ref() as Ref<HTMLCanvasElement>;
-const container = ref() as Ref<HTMLCanvasElement>;
+let canvasSizeObserver: ResizeObserver
 let renderer: WorldRenderer
 
 onMounted(() => {
   renderer = WorldRenderer.init(canvas.value)
   renderer.config.layers.background = false
-  new ResizeObserver(onCanvasResize).observe(container.value)
+  canvasSizeObserver = new ResizeObserver(onCanvasResize)
+  canvasSizeObserver.observe(canvas.value)
   updateRendererDummyWorld()
   renderer.render()
+})
+
+onBeforeUnmount(() => {
+  canvasSizeObserver.disconnect();
 })
 
 watch(props, () => {
@@ -46,7 +51,7 @@ function updateRendererDummyWorld() {
 
 function onCanvasResize() {
   const dpr = window.devicePixelRatio;
-  const { width, height } = container.value.getBoundingClientRect();
+  const { width, height } = canvas.value.getBoundingClientRect();
   canvas.value.width = Math.round(width * dpr);
   canvas.value.height = Math.round(height * dpr);
   renderer.render()

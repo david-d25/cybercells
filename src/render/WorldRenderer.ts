@@ -98,16 +98,24 @@ export default class WorldRenderer {
         gl.uniform2f(gl.getUniformLocation(this.cellShader, 'imageSize'), this.bufferTextureSize.x, this.bufferTextureSize.y)
 
         for (const [index, cell] of this.worldState.cells) {
+            const cellRgba = WorldRenderer.cellPigmentsToRgba(
+                cell.genome.cyanPigment,
+                cell.genome.magentaPigment,
+                cell.genome.yellowPigment,
+                cell.genome.whitePigment
+            )
+
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer)
             gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture)
             gl.uniform1i(gl.getUniformLocation(this.cellShader, 'image'), 0)
 
-            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'cell.id'), cell.id)
-            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.center'), cell.center.x, cell.center.y)
-            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.speed'), cell.speed.x, cell.speed.y)
-            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.mass'), cell.mass)
-            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.angle'), cell.angle)
-            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius)
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'cell.id'), cell.id);
+            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.center'), cell.center.x, cell.center.y);
+            gl.uniform2f(gl.getUniformLocation(this.cellShader, 'cell.speed'), cell.speed.x, cell.speed.y);
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.mass'), cell.mass);
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.angle'), cell.angle);
+            gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius);
+            gl.uniform4f(gl.getUniformLocation(this.cellShader, 'cell.bodyRgba'), ...cellRgba);
 
             if (index == this.worldState.cells.size - 1)
                 this.setDrawToCanvas()
@@ -228,5 +236,16 @@ export default class WorldRenderer {
             1.0, -1.0,
             -1.0, -1.0
         ])
+    }
+
+    private static cellPigmentsToRgba(
+        cyan: number,
+        magenta: number,
+        yellow: number,
+        white: number
+    ): [number, number, number, number] {
+        const [r, g, b] = [1 - cyan, 1 - magenta, 1 - yellow]; // todo use white
+        const a = 1 - (1 - cyan) * (1 - magenta) * (1 - yellow) * (1 - white);
+        return [r, g, b, a];
     }
 }

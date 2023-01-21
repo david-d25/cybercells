@@ -5,6 +5,7 @@ export default class Genome {
     cyanPigment: number = 0
     magentaPigment: number = 0
     yellowPigment: number = 0
+    whitePigment: number = 0
     hardness: number = 0.6
     splitMass: number = 350
     splitAngle: number = 0
@@ -28,17 +29,17 @@ export default class Genome {
     static newSampleGenome(): Genome {
         const result = new Genome();
         result.type = CellType.FLAGELLOCYTE;
-        [result.cyanPigment, result.magentaPigment, result.yellowPigment] = this.randomSaturatedCmyColor();
+        [result.cyanPigment, result.magentaPigment, result.yellowPigment, result.whitePigment] = this.randomSaturatedCellPigments();
         return result
     }
 
-    private static randomSaturatedCmyColor(): [number, number, number] {
-        const cmy: [number, number, number] = [1, 0, Math.random()]
-        for (let i = 0; i < cmy.length; i++) {
-            const randomIndex = Math.floor(Math.random() * cmy.length);
-            [cmy[i], cmy[randomIndex]] = [cmy[randomIndex], cmy[i]];
+    private static randomSaturatedCellPigments(): [number, number, number, number] {
+        const cmyw: [number, number, number, number] = [Math.random()/2, 0, Math.random(), 0]
+        for (let i = 0; i < cmyw.length; i++) {
+            const randomIndex = Math.floor(Math.random() * cmyw.length);
+            [cmyw[i], cmyw[randomIndex]] = [cmyw[randomIndex], cmyw[i]];
         }
-        return cmy
+        return cmyw
     }
 
     private copyRecursive(copies: Map<Genome, Genome> = new Map().set(null, null)): Genome {
@@ -47,6 +48,7 @@ export default class Genome {
         result.cyanPigment = this.cyanPigment
         result.magentaPigment = this.magentaPigment
         result.yellowPigment = this.yellowPigment
+        result.whitePigment = this.whitePigment
         result.hardness = this.hardness
         result.splitMass = this.splitMass
         result.splitAngle = this.splitAngle

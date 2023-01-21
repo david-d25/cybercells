@@ -11,8 +11,12 @@
         </PropertiesTab>
       </template>
       <template #bodies>
-        <GenomeEditorTabBody name="genome-editor"/>
-        <WorldSettingsTabBody name="settings"/>
+        <PropertiesTabBody name="genome-editor">
+          <GenomeEditor/>
+        </PropertiesTabBody>
+        <PropertiesTabBody name="settings">
+          <WorldSettings/>
+        </PropertiesTabBody>
       </template>
     </PropertiesTabbedPanel>
 
@@ -35,8 +39,9 @@ import PropertiesTabbedPanel from "@/component/properties/PropertiesTabbedPanel.
 import PropertiesTab from "@/component/properties/PropertiesTab.vue";
 import ToolsManager from "@/game/tool/ToolsManager";
 import ToolButton from "@/component/ToolButton.vue";
-import WorldSettingsTabBody from "@/component/properties/WorldSettingsTabBody.vue";
-import GenomeEditorTabBody from "@/component/properties/GenomeEditorTabBody.vue";
+import GenomeEditor from "@/component/genome/GenomeEditor.vue";
+import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
+import WorldSettings from "@/component/WorldSettings.vue";
 
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>

@@ -23,7 +23,7 @@ const emit = defineEmits(['update:modelValue'])
 const value = ref<number>(0)
 
 watch(props, () => {
-  if (props.modelValue)
+  if (props.modelValue != null)
     value.value = props.modelValue
 })
 

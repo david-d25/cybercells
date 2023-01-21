@@ -39,7 +39,7 @@
 import {computed, ref, watch} from "vue";
 import GenomeLibrary, {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 import InputLabel from "@/component/input/InputLabel.vue";
-import CellGenomePreview from "@/component/CellGenomePreview.vue";
+import CellGenomePreview from "@/component/genome/CellGenomePreview.vue";
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{

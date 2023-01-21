@@ -12,6 +12,7 @@ struct Cell {
     float mass;
     float angle;
     float radius;
+    vec4 bodyRgba;
 };
 
 uniform sampler2D image;
@@ -39,12 +40,11 @@ void main() {
     vec4 background = texture(image, texel);
     vec4 layerColor = vec4(0);
 
-    vec4 bodyColor = vec4(1, 1, 1, 0.8);
-    vec4 borderColor = mix(bodyColor, vec4(0, 0, 0, 1), 0.25);
+    vec4 borderColor = mix(cell.bodyRgba, vec4(0, 0, 0, 1), 0.25);
     float centerDistance = sqrt(pow(x - cell.center.x, 2.0) + pow(y - cell.center.y, 2.0));
 
     if (centerDistance < cell.radius){
-        layerColor = bodyColor;
+        layerColor = cell.bodyRgba;
         if (centerDistance > cell.radius - CELL_BORDER_WIDTH)
             layerColor = borderColor;
     }
