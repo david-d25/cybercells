@@ -62,17 +62,22 @@ watch(value, () => {
     background: var(--properties-input-bg);
     color: var(--properties-input-color);
     transition: width .2s ease-in-out;
-  }
 
-  .text-input:hover {
-    background: var(--properties-input-bg__hover);
-  }
+    &:hover {
+      background: var(--properties-input-bg__hover);
+    }
 
-  .text-input:focus {
-    outline: 1px solid var(--tools-button-outline__active);
-    background: var(--properties-input-bg__focused);
-    color: var(--properties-input-color__focused);
-    width: 100px;
+    &:focus {
+      outline: 1px solid var(--tools-button-outline__active);
+      background: var(--properties-input-bg__focused);
+      color: var(--properties-input-color__focused);
+      width: 100px;
+    }
+
+    &[disabled] {
+      background: var(--properties-input-bg);
+      opacity: 0.5;
+    }
   }
 }
 </style>

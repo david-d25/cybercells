@@ -49,13 +49,6 @@ import GenomePigmentColorDropletIcon from "@/component/genome/GenomePigmentColor
 import Genome from "@/game/Genome";
 import {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 
-export interface Pigments {
-  cyan: Genome["cyanPigment"];
-  magenta: Genome["magentaPigment"];
-  yellow: Genome["yellowPigment"];
-  white: Genome["whitePigment"];
-}
-
 const selectedGenomeEntry = inject('selectedGenomeEntry') as Ref<GenomeLibraryEntry | null>
 const genome: Ref<Genome> = computed(() =>
     selectedGenomeEntry.value ? selectedGenomeEntry.value!.genome : Genome.newNullGenome()
