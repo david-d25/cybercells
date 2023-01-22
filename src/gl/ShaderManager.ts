@@ -53,6 +53,10 @@ export default class ShaderManager {
         return buffer
     }
 
+    destroy() {
+        this.gl.getExtension("WEBGL_lose_context")!.loseContext();
+    }
+
     private loadShader(type: number, source: string): WebGLShader {
         const shader = this.gl.createShader(type)!
         this.gl.shaderSource(shader, source)

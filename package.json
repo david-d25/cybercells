@@ -11,30 +11,30 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "core-js": "~3.26.1",
+    "core-js": "~3.27.2",
     "gl-matrix": "^3.4.3",
     "vue": "~3.2.45",
     "vue-class-component": "^8.0.0-0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-service": "^5.0.0",
-    "@vue/eslint-config-typescript": "^9.1.0",
-    "babel-loader": "^8.3.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "gh-pages": "^4.0.0",
+    "@babel/core": "^7.20.12",
+    "@babel/eslint-parser": "^7.19.1",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/eslint-config-typescript": "^11.0.2",
+    "babel-loader": "^9.1.2",
+    "eslint": "^8.32.0",
+    "eslint-plugin-vue": "^9.9.0",
+    "gh-pages": "^5.0.0",
     "raw-loader": "^4.0.2",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
-    "typescript": "~4.5.5",
-    "vue-loader": "^16.8.3"
+    "typescript": "~4.9.4",
+    "vue-loader": "^17.0.1"
   },
   "eslintConfig": {
     "root": true,
@@ -61,8 +61,8 @@
     "not ie 11"
   ],
   "engines": {
-    "node": "~18.12.1",
-    "npm": "~9.2.0"
+    "node": "^18.12.1",
+    "npm": "^9.3.1"
   },
   "license": "MIT",
   "repository": {

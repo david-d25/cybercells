@@ -1,11 +1,12 @@
 <template>
   <div class="c-slider-with-number-input">
     <div class="slider-with-number-input">
-      <Slider class="slider" :min="min" :max="max" :step="step" v-model.number="value"/>
+      <Slider class="slider" :min="min" :max="max" :step="step" :disabled="disabled" v-model.number="value"/>
       <input class="text-input"
              type="text"
-             v-model.number="value"
              ref="textInput"
+             v-model.number="value"
+             :disabled="disabled"
              @focus="textInput.select()"
              @keydown.enter="textInput.blur()"
              @keydown.esc="textInput.blur()">
@@ -21,6 +22,7 @@ const props = defineProps<{
   min?: number,
   max?: number,
   step?: number,
+  disabled?: boolean,
   modelValue?: number
 }>()
 const emit = defineEmits(['update:modelValue'])

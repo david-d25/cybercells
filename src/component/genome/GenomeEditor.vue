@@ -1,22 +1,38 @@
 <template>
-  <PropertiesSection title="Genome editor">
-    <GenomeSelector :library="library" v-model="selectedGenomeEntry"/>
+  <div>
     <PropertiesSubheader>Pigments</PropertiesSubheader>
-    <GenomePigmentsEditor :genome="selectedGenome"/>
-  </PropertiesSection>
+    <GenomePigmentsEditor v-model="pigments"/>
+    <PropertiesSubheader>Children</PropertiesSubheader>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {computed, inject, ref, Ref} from "vue";
-import PropertiesSection from "@/component/properties/PropertiesSection.vue";
-import GenomeLibrary, { GenomeLibraryEntry } from "@/game/GenomeLibrary";
-import GenomeSelector from "@/component/genome/GenomeSelector.vue";
-import GenomePigmentsEditor from "@/component/genome/GenomePigmentsEditor.vue";
 import PropertiesSubheader from "@/component/properties/PropertiesSubheader.vue";
-import Genome from "@/game/Genome";
+import GenomePigmentsEditor, { Pigments } from "@/component/genome/GenomePigmentsEditor.vue";
+import {computed, inject, Ref} from "vue";
+import {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 
-const library = inject('genomeLibrary') as Ref<GenomeLibrary>
+const selectedGenomeEntry = inject('selectedGenomeEntry') as Ref<GenomeLibraryEntry | null>
 
-let selectedGenomeEntry = ref<GenomeLibraryEntry | null>(null)
-let selectedGenome: Ref<Genome | null> = computed(() => selectedGenomeEntry.value?.genome || null)
+const pigments = computed({
+  get() {
+    const genome = selectedGenomeEntry.value?.genome
+    return {
+      cyan: genome ? genome.cyanPigment : 0,
+      magenta: genome ? genome.magentaPigment : 0,
+      yellow: genome ? genome.yellowPigment : 0,
+      white: genome ? genome.whitePigment : 0
+    }
+  },
+  set(value: Pigments) {
+    const genome = selectedGenomeEntry.value?.genome
+    if (genome) {
+      genome.cyanPigment = value.cyan;
+      genome.magentaPigment = value.magenta;
+      genome.yellowPigment = value.yellow;
+      genome.whitePigment = value.white;
+    }
+    console.log(1);
+  }
+})
 </script>

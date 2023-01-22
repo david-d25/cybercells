@@ -55,7 +55,7 @@ const libraryEntriesFiltered = computed(() => {
   if (value.value && nameInput.value === value.value.name)
     return props.library.entries
   else
-    return [...props.library.entries].filter(e => e.name.includes(nameInput.value))
+    return props.library.search(nameInput.value)
 })
 
 watch(value, () => {

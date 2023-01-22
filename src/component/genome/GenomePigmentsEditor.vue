@@ -1,54 +1,65 @@
 <template>
   <div class="c-genome-pigments-editor">
     <InputLabel class="label">Cyan</InputLabel>
-    <SliderWithNumberInput class="input" :min="0" :max="1" :step="0.01" v-model="state.cyan"/>
+    <SliderWithNumberInput class="input"
+                           :min="0"
+                           :max="1"
+                           :step="0.01"
+                           :disabled="!selectedGenomeEntry"
+                           v-model="genome.cyanPigment"/>
 
     <InputLabel class="label">Magenta</InputLabel>
-    <SliderWithNumberInput class="input" :min="0" :max="1" :step="0.01" v-model="state.magenta"/>
+    <SliderWithNumberInput class="input"
+                           :min="0"
+                           :max="1"
+                           :step="0.01"
+                           :disabled="!selectedGenomeEntry"
+                           v-model="genome.magentaPigment"/>
 
     <InputLabel class="label">Yellow</InputLabel>
-    <SliderWithNumberInput class="input" :min="0" :max="1" :step="0.01" v-model="state.yellow"/>
+    <SliderWithNumberInput class="input"
+                           :min="0"
+                           :max="1"
+                           :step="0.01"
+                           :disabled="!selectedGenomeEntry"
+                           v-model="genome.yellowPigment"/>
 
     <InputLabel class="label">White</InputLabel>
-    <SliderWithNumberInput class="input" :min="0" :max="1" :step="0.01" v-model="state.white"/>
+    <SliderWithNumberInput class="input"
+                           :min="0"
+                           :max="1"
+                           :step="0.01"
+                           :disabled="!selectedGenomeEntry"
+                           v-model="genome.whitePigment"/>
 
     <div class="pigments-view">
-      <GenomePigmentColorDropletIcon class="pigment-icon" color="cyan" :value="state.cyan"/>
-      <GenomePigmentColorDropletIcon class="pigment-icon" color="magenta" :value="state.magenta"/>
-      <GenomePigmentColorDropletIcon class="pigment-icon" color="yellow" :value="state.yellow"/>
-      <GenomePigmentColorDropletIcon class="pigment-icon" color="white" :value="state.white"/>
+      <GenomePigmentColorDropletIcon class="pigment-icon" color="cyan" :value="genome.cyanPigment"/>
+      <GenomePigmentColorDropletIcon class="pigment-icon" color="magenta" :value="genome.magentaPigment"/>
+      <GenomePigmentColorDropletIcon class="pigment-icon" color="yellow" :value="genome.yellowPigment"/>
+      <GenomePigmentColorDropletIcon class="pigment-icon" color="white" :value="genome.whitePigment"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import InputLabel from "@/component/input/InputLabel.vue";
-import Genome from "@/game/Genome";
-import {ref, watch} from "vue";
+import {computed, inject, Ref} from "vue";
 import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import GenomePigmentColorDropletIcon from "@/component/genome/GenomePigmentColorDropletIcon.vue";
+import Genome from "@/game/Genome";
+import {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 
-const props = defineProps<{
-  genome: Genome | null
-}>()
+export interface Pigments {
+  cyan: Genome["cyanPigment"];
+  magenta: Genome["magentaPigment"];
+  yellow: Genome["yellowPigment"];
+  white: Genome["whitePigment"];
+}
 
-const state = ref({
-  cyan: 0,
-  magenta: 0,
-  yellow: 0,
-  white: 0
-})
-
-watch(props, () => {
-  if (props.genome) {
-    state.value = {
-      cyan: props.genome.cyanPigment,
-      magenta: props.genome.magentaPigment,
-      yellow: props.genome.yellowPigment,
-      white: props.genome.whitePigment
-    }
-  }
-})
+const selectedGenomeEntry = inject('selectedGenomeEntry') as Ref<GenomeLibraryEntry | null>
+const genome: Ref<Genome> = computed(() =>
+    selectedGenomeEntry.value ? selectedGenomeEntry.value!.genome : Genome.newNullGenome()
+)
 </script>
 
 <style lang="scss">

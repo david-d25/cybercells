@@ -1,39 +1,50 @@
 import CellType from "@/game/CellType";
 
 export default class Genome {
-    type: CellType = CellType.FLAGELLOCYTE
-    cyanPigment: number = 0
-    magentaPigment: number = 0
-    yellowPigment: number = 0
-    whitePigment: number = 0
-    hardness: number = 0.6
-    splitMass: number = 350
-    splitAngle: number = 0
-    child1Angle: number = 0
-    child2Angle: number = 0
-    stickOnSplit: boolean = false
-    child1KeepConnections: boolean = true
-    child2KeepConnections: boolean = true
-    nutritionPriority: number = 0.5
+    private constructor(
+        public type: CellType = CellType.FLAGELLOCYTE,
+        public cyanPigment: number = 0,
+        public magentaPigment: number = 0,
+        public yellowPigment: number = 0,
+        public whitePigment: number = 0,
+        public hardness: number = 0,
+        public splitMass: number = 0,
+        public splitAngle: number = 0,
+        public child1Angle: number = 0,
+        public child2Angle: number = 0,
+        public stickOnSplit: boolean = false,
+        public child1KeepConnections: boolean = false,
+        public child2KeepConnections: boolean = false,
+        public nutritionPriority: number = 0,
+    ) {}
 
-    flagellumForce: number = 8
+    flagellumForce: number = 8;
 
-    children: [Genome, Genome] = [this, this]
+    children: [Genome, Genome] = [this, this];
 
     deepCopy = this.copyRecursive
 
-    applyRadiation() {
+    applyRadiationLocally() {
         // TODO
+    }
+
+    static newNullGenome(): Genome {
+        return new Genome();
     }
 
     static newSampleGenome(): Genome {
         const result = new Genome();
         result.type = CellType.FLAGELLOCYTE;
-        [result.cyanPigment, result.magentaPigment, result.yellowPigment, result.whitePigment] = this.randomSaturatedCellPigments();
+        result.hardness = 0.6;
+        result.splitMass = 350;
+        result.child1KeepConnections = true;
+        result.child2KeepConnections = true;
+        result.nutritionPriority = 1;
+        [result.cyanPigment, result.magentaPigment, result.yellowPigment, result.whitePigment] = this.getRandomCellPigments();
         return result
     }
 
-    private static randomSaturatedCellPigments(): [number, number, number, number] {
+    private static getRandomCellPigments(): [number, number, number, number] {
         const cmyw: [number, number, number, number] = [Math.random()/2, 0, Math.random(), 0]
         for (let i = 0; i < cmyw.length; i++) {
             const randomIndex = Math.floor(Math.random() * cmyw.length);

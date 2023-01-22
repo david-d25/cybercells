@@ -2,6 +2,7 @@
   <div class="slider-container">
     <input class="slider-input"
            type="range"
+           :disabled="disabled"
            :min="min"
            :max="max"
            :step="step"
@@ -16,6 +17,7 @@ const props = defineProps<{
   min?: number,
   max?: number,
   step?: number,
+  disabled?: boolean,
   modelValue?: number
 }>()
 

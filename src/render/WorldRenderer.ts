@@ -79,6 +79,10 @@ export default class WorldRenderer {
         return vec2.transformMat4(vec2.create(), screenPoint, this.buildCameraTransform())
     }
 
+    destroy() {
+        this.shaderManager.destroy();
+    }
+
     private renderCells() {
         if (!this.worldState)
             return

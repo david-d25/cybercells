@@ -12,7 +12,7 @@
       </template>
       <template #bodies>
         <PropertiesTabBody name="genome-editor">
-          <GenomeEditor/>
+          <GenomeLibraryEditor/>
         </PropertiesTabBody>
         <PropertiesTabBody name="settings">
           <WorldSettings/>
@@ -39,9 +39,9 @@ import PropertiesTabbedPanel from "@/component/properties/PropertiesTabbedPanel.
 import PropertiesTab from "@/component/properties/PropertiesTab.vue";
 import ToolsManager from "@/game/tool/ToolsManager";
 import ToolButton from "@/component/ToolButton.vue";
-import GenomeEditor from "@/component/genome/GenomeEditor.vue";
 import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
 import WorldSettings from "@/component/WorldSettings.vue";
+import GenomeLibraryEditor from "@/component/genome/GenomeLibraryEditor.vue";
 
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>

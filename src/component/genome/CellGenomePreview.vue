@@ -32,6 +32,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   canvasSizeObserver.disconnect();
+  renderer.destroy();
 })
 
 watch(props, () => {

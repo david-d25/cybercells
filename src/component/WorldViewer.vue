@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted, Ref } from 'vue';
+import {ref, inject, onMounted, Ref, onBeforeUnmount} from 'vue';
 import WorldState from "@/game/state/WorldState";
 import WorldRenderer from "@/render/WorldRenderer";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
@@ -37,7 +37,10 @@ const dragging = {
   lastMouseWorldPoint: [0, 0]
 }
 
-onMounted(init)
+onMounted(init);
+onBeforeUnmount(() => {
+  renderer.destroy()
+});
 
 function init() {
   canvas = canvasRef.value!
