@@ -13,6 +13,7 @@ export default class World {
         public density: number,
         public viscosity: number,
         public radiation: number,
+        public lightIntensity: number,
         public camera: Camera = Camera.NULL
     ) {}
 
@@ -44,12 +45,16 @@ export default class World {
         this.walls.delete(object.id);
     }
 
+    public getLightIntensityAtPoint(point: Vector2) {
+
+    }
+
     public static getDefault() {
-        return new World(0, 0, new Vector2(), 0, 0, 0)
+        return new World(0, 0, new Vector2(), 0, 0, 0, 0)
     }
 
     static TEMPORARY_DEBUG = (() => {
-        const state = new World(800, 600, new Vector2(), 0, 0, 0, new Camera(new Vector2(0, 0), 800))
+        const state = new World(800, 600, new Vector2(), 0, 0, 0, 0, new Camera(new Vector2(0, 0), 800))
         state.cells.set(0, new Cell(new Vector2(50, 50), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
         state.cells.set(1, new Cell(new Vector2(200, 120), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
         return state

@@ -76,6 +76,8 @@ watch(value, () => {
 
     &[disabled] {
       background: var(--properties-input-bg);
+      pointer-events: none;
+      user-select: none;
       opacity: 0.5;
     }
   }

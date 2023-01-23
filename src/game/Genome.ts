@@ -45,7 +45,12 @@ export default class Genome {
     }
 
     private static getRandomCellPigments(): [number, number, number, number] {
-        const cmyw: [number, number, number, number] = [Math.random()/2, 0, Math.random(), 0]
+        const cmyw: [number, number, number, number] = [
+            Math.round(Math.random()/2*100)/100,
+            Math.round(Math.random()*100)/100,
+            0,
+            0
+        ];
         for (let i = 0; i < cmyw.length; i++) {
             const randomIndex = Math.floor(Math.random() * cmyw.length);
             [cmyw[i], cmyw[randomIndex]] = [cmyw[randomIndex], cmyw[i]];

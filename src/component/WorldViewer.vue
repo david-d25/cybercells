@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, inject, onMounted, Ref, onBeforeUnmount} from 'vue';
+import {ref, inject, onMounted, onBeforeUnmount} from 'vue';
 import World from "@/game/world/World";
 import WorldRenderer from "@/render/WorldRenderer";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
@@ -27,7 +27,7 @@ const containerRef = ref<HTMLDivElement>()
 
 const emit = defineEmits<{(e: string, payload: WorldMouseEvent): void}>()
 
-let worldState: Ref<World> = inject('worldState')!
+let world: World = inject('world')!
 let canvas: HTMLCanvasElement
 let container: HTMLDivElement
 let renderer: WorldRenderer
@@ -45,13 +45,13 @@ onBeforeUnmount(() => {
 function init() {
   canvas = canvasRef.value!
   container = containerRef.value!
-  renderer = WorldRenderer.init(canvas, worldState.value)
+  renderer = WorldRenderer.init(canvas, world)
   new ResizeObserver(onCanvasResize).observe(container)
   renderingRoutine();
 }
 
 function onWheel(event: WheelEvent) {
-  const camera = worldState.value.camera
+  const camera = world.camera
   if (event.deltaY > 0)
     camera.height *= 1 + event.deltaY*SCROLL_SENSITIVITY
   else
@@ -98,8 +98,8 @@ function handleDraggingEvent(event: WorldMouseEvent) {
 
   if (event.type === 'world-mousemove' && dragging.dragMode) {
     const [ prevX, prevY ] = dragging.lastMouseWorldPoint
-    worldState.value.camera.center.x += prevX - event.worldX
-    worldState.value.camera.center.y += prevY - event.worldY;
+    world.camera.center.x += prevX - event.worldX
+    world.camera.center.y += prevY - event.worldY;
     [ event.worldX, event.worldY ] = renderer.unproject([event.screenX, event.screenY])
     dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ]
   }

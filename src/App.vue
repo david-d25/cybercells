@@ -18,7 +18,7 @@ import Genome from "@/game/Genome";
 import SelectionTool from "@/game/tool/SelectionTool";
 
 const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ]
-const worldState = World.TEMPORARY_DEBUG
+const world = World.TEMPORARY_DEBUG
 
 const genomeLibrary = new GenomeLibrary()
 genomeLibrary.entries.add(new GenomeLibraryEntry("my genome", Genome.newSampleGenome()))
@@ -26,10 +26,10 @@ genomeLibrary.entries.add(new GenomeLibraryEntry("test", Genome.newSampleGenome(
 genomeLibrary.entries.add(new GenomeLibraryEntry("aaaaaaaaa", Genome.newSampleGenome()))
 genomeLibrary.entries.add(new GenomeLibraryEntry("aboba", Genome.newSampleGenome()))
 
-provide('worldState', ref<World>(worldState))
+provide('world', world)
 provide('genomeLibrary', ref<GenomeLibrary>(genomeLibrary))
 provide('appPreferences', ref<AppPreferences>(new AppPreferences()))
-provide('toolsManager', ref(new ToolsManager(tools, worldState)))
+provide('toolsManager', ref(new ToolsManager(tools, world)))
 
 </script>
 
