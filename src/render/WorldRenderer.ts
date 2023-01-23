@@ -1,7 +1,7 @@
 import ShaderManager from "@/gl/ShaderManager";
 import { mat4, vec2 } from 'gl-matrix';
 
-import WorldState from "@/game/state/WorldState";
+import World from "@/game/world/World";
 
 import commonVertexShaderSource from 'raw-loader!@/shaders/common.vert';
 import backgroundFragmentShaderSource from 'raw-loader!@/shaders/background.frag';
@@ -31,7 +31,7 @@ export default class WorldRenderer {
         private shaderManager: ShaderManager,
         private backgroundShader: WebGLShader,
         private cellShader: WebGLShader,
-        public worldState: WorldState | null = null
+        public worldState: World | null = null
     ) {
         this.mainMesh = this.createMainMesh()
         this.drawBufferTextureUv = this.createDrawBufferTextureUv()
@@ -39,7 +39,7 @@ export default class WorldRenderer {
         this.autoUpdateDrawBufferTexture()
     }
 
-    static init(canvas: HTMLCanvasElement, worldState: WorldState | null = null): WorldRenderer {
+    static init(canvas: HTMLCanvasElement, worldState: World | null = null): WorldRenderer {
         const shaderManager = ShaderManager.init(canvas);
 
         const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource)

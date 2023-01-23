@@ -1,6 +1,6 @@
 import Vector2 from "@/geom/Vector2";
 
-export default class FoodState implements WorldObject {
+export default class Food implements WorldObject {
     static FOOD_DENSITY = 4
 
     id = -1
@@ -12,6 +12,6 @@ export default class FoodState implements WorldObject {
 
 
     get radius() {
-        return Math.sqrt(this.mass/Math.PI) / FoodState.FOOD_DENSITY
+        return Math.sqrt(this.mass/Math.PI) / Food.FOOD_DENSITY
     }
 }

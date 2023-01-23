@@ -1,7 +1,7 @@
 import Vector2 from "@/geom/Vector2";
 import Genome from "@/game/Genome";
 
-export default class CellState implements WorldObject {
+export default class Cell implements WorldObject {
     id = -1
 
     constructor(

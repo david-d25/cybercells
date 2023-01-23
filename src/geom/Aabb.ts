@@ -3,7 +3,7 @@ import Vector2 from "@/geom/Vector2";
 /**
  * Represents an Axis-Aligned Bounding Box.
  */
-class Aabb {
+export default class Aabb {
     min: Vector2
     max: Vector2
 

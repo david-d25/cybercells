@@ -14,14 +14,14 @@
 <script setup lang="ts">
 import { inject, reactive, watch, Ref } from "vue";
 
-import WorldState from "@/game/state/WorldState";
+import World from "@/game/world/World";
 
 import PropertiesSection from "@/component/properties/PropertiesSection.vue";
 import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import Vector2 from "@/geom/Vector2";
 import InputLabel from "@/component/input/InputLabel.vue";
 
-const worldState = inject('worldState') as Ref<WorldState>
+const worldState = inject('worldState') as Ref<World>
 const inputs = reactive({
   gravity: 0,
   density: 0,

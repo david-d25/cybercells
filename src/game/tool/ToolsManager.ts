@@ -1,6 +1,6 @@
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
 import Tool from "@/game/tool/Tool";
-import WorldState from "@/game/state/WorldState";
+import World from "@/game/world/World";
 
 export default class ToolsManager {
 
@@ -8,7 +8,7 @@ export default class ToolsManager {
 
     constructor(
         public tools: Tool[],
-        private world: WorldState
+        private world: World
     ) {
         tools.forEach(tool => tool.init(this))
         this.currentTool = tools[0]

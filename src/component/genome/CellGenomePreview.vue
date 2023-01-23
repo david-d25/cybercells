@@ -8,10 +8,10 @@
 import Genome from "@/game/Genome";
 import WorldRenderer from "@/render/WorldRenderer";
 import {onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
-import WorldState from "@/game/state/WorldState";
+import World from "@/game/world/World";
 import Vector2 from "@/geom/Vector2";
 import Camera from "@/game/Camera";
-import CellState from "@/game/state/CellState";
+import Cell from "@/game/world/object/Cell";
 
 const props = defineProps<{
   genome: Genome | null
@@ -41,9 +41,9 @@ watch(props, () => {
 })
 
 function updateRendererDummyWorld() {
-  const dummyWorld = WorldState.getDefault()
+  const dummyWorld = World.getDefault()
   if (props.genome) {
-    const dummyCell = new CellState(new Vector2(), new Vector2(), 300, Math.PI/4, 0, props.genome)
+    const dummyCell = new Cell(new Vector2(), new Vector2(), 300, Math.PI/4, 0, props.genome)
     dummyWorld.cells.set(0, dummyCell)
     dummyWorld.camera = new Camera(new Vector2(), dummyCell.radius * 3)
   }

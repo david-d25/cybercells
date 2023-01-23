@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import {ref, inject, onMounted, Ref, onBeforeUnmount} from 'vue';
-import WorldState from "@/game/state/WorldState";
+import World from "@/game/world/World";
 import WorldRenderer from "@/render/WorldRenderer";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
 
@@ -27,7 +27,7 @@ const containerRef = ref<HTMLDivElement>()
 
 const emit = defineEmits<{(e: string, payload: WorldMouseEvent): void}>()
 
-let worldState: Ref<WorldState> = inject('worldState')!
+let worldState: Ref<World> = inject('worldState')!
 let canvas: HTMLCanvasElement
 let container: HTMLDivElement
 let renderer: WorldRenderer

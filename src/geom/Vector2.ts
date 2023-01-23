@@ -21,12 +21,18 @@ export default class Vector2 {
         return new Vector2(this.x - that.x, this.y - that.y)
     }
 
-    times(that: Vector2): Vector2 {
-        return new Vector2(this.x * that.y, this.y * that.y)
+    times(factor: Vector2 | number): Vector2 {
+        if (factor instanceof Vector2)
+            return new Vector2(this.x * factor.y, this.y * factor.y);
+        else
+            return new Vector2(this.x * factor, this.y * factor);
     }
 
-    div(that: Vector2): Vector2 {
-        return new Vector2(this.x / that.y, this.x / that.y)
+    div(factor: Vector2 | number): Vector2 {
+        if (factor instanceof Vector2)
+            return new Vector2(this.x / factor.y, this.x / factor.y);
+        else
+            return new Vector2(this.x / factor, this.y / factor);
     }
 
     get negative(): Vector2 {
@@ -70,6 +76,10 @@ export default class Vector2 {
 
     distance(that: Vector2): number {
         return sqrt(pow(this.x - that.x, 2) + pow(this.y - that.y, 2))
+    }
+
+    isNaN() {
+        return isNaN(this.x) || isNaN(this.y);
     }
 
     /**
