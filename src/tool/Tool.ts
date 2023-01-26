@@ -1,8 +1,9 @@
-import ToolsManager from "@/game/tool/ToolsManager";
+import ToolsManager from "@/tool/ToolsManager";
 
 export default interface Tool {
     name: string
     icon: string
+    enabled: boolean
 
     init(toolsManager: ToolsManager): void
     onSelect(): void

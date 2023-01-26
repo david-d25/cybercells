@@ -62,10 +62,11 @@ const genome: Ref<Genome> = computed(() =>
   }
 
   .pigments-view {
+    margin-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 75px;
+    height: 40px;
 
     .pigment-icon {
       width: 40px;

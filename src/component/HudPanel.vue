@@ -21,14 +21,17 @@
     </PropertiesTabbedPanel>
 
     <div class="tool-buttons-container">
-      <ToolButton class="tool-button"
+      <HudButton class="tool-button"
                   v-for="tool in toolsManager.tools"
                   :key="tool.name"
+                  :disabled="!tool.enabled"
                   :active="toolsManager.currentTool === tool"
                   @click="toolsManager.currentTool = tool">
         <img class="tool-button__icon" :src="tool.icon" alt="Tool icon">
-      </ToolButton>
+      </HudButton>
     </div>
+
+    <TimeControl/>
 
   </div>
 </template>
@@ -37,11 +40,12 @@
 import { inject } from "vue";
 import PropertiesTabbedPanel from "@/component/properties/PropertiesTabbedPanel.vue";
 import PropertiesTab from "@/component/properties/PropertiesTab.vue";
-import ToolsManager from "@/game/tool/ToolsManager";
-import ToolButton from "@/component/ToolButton.vue";
+import ToolsManager from "@/tool/ToolsManager";
+import HudButton from "@/component/HudButton.vue";
 import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
 import WorldSettings from "@/component/WorldSettings.vue";
 import GenomeLibraryEditor from "@/component/genome/GenomeLibraryEditor.vue";
+import TimeControl from "@/component/TimeControl.vue";
 
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>
@@ -76,6 +80,7 @@ const toolsManager = inject('toolsManager') as ToolsManager;
 
   .tool-button {
     padding: 5px;
+    margin-left: 10px;
     margin-bottom: 10px;
 
     .tool-button__icon {

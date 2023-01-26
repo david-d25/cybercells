@@ -7,30 +7,35 @@
 import { provide, ref } from "vue";
 
 import WorldViewer from "@/component/WorldViewer.vue";
-import ControlsPanel from "@/component/ControlsPanel.vue";
+import ControlsPanel from "@/component/HudPanel.vue";
 import GenomeLibrary, {GenomeLibraryEntry} from "@/game/GenomeLibrary";
 import World from "@/game/world/World";
 import AppPreferences from "@/AppPreferences";
-import ToolsManager from "@/game/tool/ToolsManager";
-import AddCellTool from "@/game/tool/AddCellTool";
-import RemoveCellTool from "@/game/tool/RemoveCellTool";
+import ToolsManager from "@/tool/ToolsManager";
+import AddCellTool from "@/tool/AddCellTool";
+import RemoveCellTool from "@/tool/RemoveCellTool";
 import Genome from "@/game/Genome";
-import SelectionTool from "@/game/tool/SelectionTool";
+import SelectionTool from "@/tool/SelectionTool";
+import WorldUpdater from "@/game/world/WorldUpdater";
 
-const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ]
-const world = World.TEMPORARY_DEBUG
+const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ];
+const world = World.TEMPORARY_DEBUG;
 
-const genomeLibrary = new GenomeLibrary()
-genomeLibrary.entries.add(new GenomeLibraryEntry("my genome", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("test", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("aaaaaaaaa", Genome.newSampleGenome()))
-genomeLibrary.entries.add(new GenomeLibraryEntry("aboba", Genome.newSampleGenome()))
+const genomeLibrary = new GenomeLibrary();
+const worldUpdater = new WorldUpdater(world);
+const appPreferences = new AppPreferences();
+const toolsManager = new ToolsManager(tools, world);
 
-provide('world', world)
-provide('genomeLibrary', ref<GenomeLibrary>(genomeLibrary))
-provide('appPreferences', ref<AppPreferences>(new AppPreferences()))
-provide('toolsManager', ref(new ToolsManager(tools, world)))
+genomeLibrary.entries.add(new GenomeLibraryEntry("my genome", Genome.newSampleGenome()));
+genomeLibrary.entries.add(new GenomeLibraryEntry("test", Genome.newSampleGenome()));
+genomeLibrary.entries.add(new GenomeLibraryEntry("aaaaaaaaa", Genome.newSampleGenome()));
+genomeLibrary.entries.add(new GenomeLibraryEntry("aboba", Genome.newSampleGenome()));
 
+provide('world', world);
+provide('worldUpdater', ref(worldUpdater));
+provide('genomeLibrary', ref(genomeLibrary));
+provide('appPreferences', ref(appPreferences));
+provide('toolsManager', ref(toolsManager));
 </script>
 
 <style lang="scss">

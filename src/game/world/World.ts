@@ -46,7 +46,7 @@ export default class World {
     }
 
     public getLightIntensityAtPoint(point: Vector2) {
-
+        // TODO
     }
 
     public static getDefault() {

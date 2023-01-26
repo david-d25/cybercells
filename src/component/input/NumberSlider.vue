@@ -79,7 +79,7 @@ watch(value, () => {
   }
 
   .input:focus {
-    outline: 1px solid var(--tools-button-outline__active);
+    outline: 1px solid var(--hud-button-outline__active);
   }
 
   .input[disabled] {

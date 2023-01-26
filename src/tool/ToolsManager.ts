@@ -1,5 +1,5 @@
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
-import Tool from "@/game/tool/Tool";
+import Tool from "@/tool/Tool";
 import World from "@/game/world/World";
 
 export default class ToolsManager {

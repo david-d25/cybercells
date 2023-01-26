@@ -153,6 +153,7 @@ export default class WorldRenderer {
         gl.uniformMatrix4fv(gl.getUniformLocation(this.backgroundShader, 'viewMatrix'), false, viewMatrix)
         gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'time'), (Date.now() - this.startTime)/1000)
         gl.uniform2f(gl.getUniformLocation(this.backgroundShader, 'areaSize'), this.worldState.width, this.worldState.height)
+        gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'lightIntensity'), this.worldState.lightIntensity)
 
         this.setDrawToBufferTexture()
 
