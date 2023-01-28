@@ -119,6 +119,10 @@ export default class Geometry {
         ).plus(a);
     }
 
+    static clamp(value: number, min: number, max: number) {
+        return Math.min(Math.max(value, min), max);
+    }
+
     private static findVerticalLineIntersection(
         verticalLine: [Vector2, Vector2],
         otherLine: [Vector2, Vector2]

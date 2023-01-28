@@ -5,7 +5,8 @@
                border-width="default 0.5px default default"
                @click="onPausePlayButtonClick"
     >
-<!--      TODO-->
+      <img class="icon" src="@public/icon/time_control/pause.svg" alt="pause icon" v-if="updater.simulationActive">
+      <img class="icon" src="@public/icon/time_control/play.svg" alt="play icon" v-else>
     </HudButton>
 
     <HudButton class="button play-1x-button"
@@ -38,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import {computed, inject, Ref} from "vue";
+import {inject, Ref} from "vue";
 
 import HudButton from "@/component/HudButton.vue";
-import WorldUpdater from "@/game/world/WorldUpdater";
+import WorldUpdater from "@/game/world/updater/WorldUpdater";
 
 const updater = inject('worldUpdater') as Ref<WorldUpdater>;
 
@@ -69,6 +70,11 @@ function onSpeedButtonClick(speed: number) {
   .button {
     color: white;
     font-size: 18px;
+    padding: 5px;
+  }
+
+  .icon {
+    width: 100%;
   }
 }
 </style>

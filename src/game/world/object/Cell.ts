@@ -21,6 +21,6 @@ export default class Cell implements WorldObject {
     }
 }
 
-class CellConnectionState {
+export class CellConnectionState {
     constructor(public angle: number, public partnerId: number) {}
 }

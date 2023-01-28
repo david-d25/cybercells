@@ -1,16 +1,16 @@
 <template>
   <PropertiesSection class="c-world-settings-tab-body" title="World settings">
     <InputLabel>Gravity</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="2" :step="0.01" v-model.number="world.gravity.y"/>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="20" :step="0.01" v-model.number="world.gravity.y"/>
 
     <InputLabel>Density</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="world.density"/>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="world.density" :disabled="true"/>
 
     <InputLabel>Viscosity</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.viscosity"/>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.viscosity" :disabled="true"/>
 
     <InputLabel>Light intensity</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.lightIntensity"/>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.lightIntensity" :disabled="true"/>
   </PropertiesSection>
 </template>
 
@@ -23,7 +23,7 @@ import PropertiesSection from "@/component/properties/PropertiesSection.vue";
 import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import InputLabel from "@/component/input/InputLabel.vue";
 
-const world = inject('world') as World
+const world = inject('world') as World;
 </script>
 
 <style lang="scss">

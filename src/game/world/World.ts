@@ -43,20 +43,26 @@ export default class World {
         this.cells.delete(object.id);
         this.food.delete(object.id);
         this.walls.delete(object.id);
+
+        if (object instanceof Cell) {
+            for (const id of object.connections.keys()) {
+                this.cells.get(id)?.connections.delete(object.id);
+            }
+        }
     }
 
     public getLightIntensityAtPoint(point: Vector2) {
         // TODO
     }
 
-    public static getDefault() {
+    static getDefault() {
         return new World(0, 0, new Vector2(), 0, 0, 0, 0)
     }
 
     static TEMPORARY_DEBUG = (() => {
-        const state = new World(800, 600, new Vector2(), 0, 0, 0, 0, new Camera(new Vector2(0, 0), 800))
-        state.cells.set(0, new Cell(new Vector2(50, 50), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
-        state.cells.set(1, new Cell(new Vector2(200, 120), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
-        return state
+        const world = new World(800, 600, new Vector2(), 0, 0, 0, 0, new Camera(new Vector2(0, 0), 800))
+        world.add(new Cell(new Vector2(50, 50), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
+        world.add(new Cell(new Vector2(200, 120), new Vector2(), 400, 0, 0, Genome.newSampleGenome()))
+        return world
     })()
 }

@@ -16,7 +16,7 @@ import AddCellTool from "@/tool/AddCellTool";
 import RemoveCellTool from "@/tool/RemoveCellTool";
 import Genome from "@/game/Genome";
 import SelectionTool from "@/tool/SelectionTool";
-import WorldUpdater from "@/game/world/WorldUpdater";
+import WorldUpdater from "@/game/world/updater/WorldUpdater";
 
 const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ];
 const world = World.TEMPORARY_DEBUG;
