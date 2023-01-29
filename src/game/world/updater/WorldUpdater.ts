@@ -19,6 +19,8 @@ export default class WorldUpdater {
     }
 
     static readonly SIMULATION_TICK_FIXED_DELTA = 16;
+    static readonly SIMULATION_SPEED_FACTOR = 5;
+
     private readonly updateContext = new UpdateContext();
     private readonly updatePipeline: Updater[]
 
@@ -32,11 +34,13 @@ export default class WorldUpdater {
     }
 
     startSimulation() {
-        if (!this.simulationActive)
+        if (!this.simulationActive) {
             this.intervalId = setInterval(
                 this.intervalRoutine.bind(this),
                 WorldUpdater.SIMULATION_TICK_FIXED_DELTA
             );
+            this.lastUpdateMillis = Date.now();
+        }
     }
 
     pauseSimulation() {
@@ -51,8 +55,6 @@ export default class WorldUpdater {
     }
 
     private intervalRoutine() {
-        if (this.lastUpdateMillis == -1)
-            this.lastUpdateMillis = Date.now();
         const deltaMillis = Date.now() - this.lastUpdateMillis;
         const ticksRequiredOriginal = Math.round(deltaMillis / WorldUpdater.SIMULATION_TICK_FIXED_DELTA);
         const ticksRequiredMultiplied = Math.min(
@@ -60,7 +62,7 @@ export default class WorldUpdater {
             10
         );
         for (let i = 0; i < ticksRequiredMultiplied; i++)
-            this.tick(WorldUpdater.SIMULATION_TICK_FIXED_DELTA/1000);
+            this.tick(WorldUpdater.SIMULATION_TICK_FIXED_DELTA / 1000 * WorldUpdater.SIMULATION_SPEED_FACTOR);
         this.lastUpdateMillis += WorldUpdater.SIMULATION_TICK_FIXED_DELTA * ticksRequiredOriginal;
     }
 

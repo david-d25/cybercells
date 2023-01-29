@@ -1,7 +1,7 @@
 <template>
   <PropertiesSection class="c-world-settings-tab-body" title="World settings">
     <InputLabel>Gravity</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="20" :step="0.01" v-model.number="world.gravity.y"/>
+    <SliderWithNumberInput class="slider-input" :min="-5" :max="5" :step="0.01" v-model.number="world.gravity.y"/>
 
     <InputLabel>Density</InputLabel>
     <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="world.density" :disabled="true"/>

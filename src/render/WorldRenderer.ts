@@ -6,6 +6,8 @@ import World from "@/game/world/World";
 import commonVertexShaderSource from 'raw-loader!@/shaders/common.vert';
 import backgroundFragmentShaderSource from 'raw-loader!@/shaders/background.frag';
 import cellFragmentShaderSource from 'raw-loader!@/shaders/cell.frag';
+import wallFragmentShaderSource from 'raw-loader!@/shaders/wall.frag';
+import emptyFragmentShaderSource from 'raw-loader!@/shaders/empty.frag';
 import Vector2 from "@/geom/Vector2";
 
 export default class WorldRenderer {
@@ -31,40 +33,48 @@ export default class WorldRenderer {
         private shaderManager: ShaderManager,
         private backgroundShader: WebGLShader,
         private cellShader: WebGLShader,
+        private wallShader: WebGLShader,
+        private emptyShader: WebGLShader,
         public worldState: World | null = null
     ) {
-        this.mainMesh = this.createMainMesh()
-        this.drawBufferTextureUv = this.createDrawBufferTextureUv()
-        this.framebuffer = shaderManager.gl.createFramebuffer()
-        this.autoUpdateDrawBufferTexture()
+        this.mainMesh = this.createMainMesh();
+        this.drawBufferTextureUv = this.createDrawBufferTextureUv();
+        this.framebuffer = shaderManager.gl.createFramebuffer();
+        this.autoUpdateDrawBufferTexture();
     }
 
     static init(canvas: HTMLCanvasElement, worldState: World | null = null): WorldRenderer {
         const shaderManager = ShaderManager.init(canvas);
 
-        const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource)
-        const cellShader = shaderManager.newShader(commonVertexShaderSource, cellFragmentShaderSource)
-        return new WorldRenderer(shaderManager, backgroundShader, cellShader, worldState)
+        const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource);
+        const cellShader = shaderManager.newShader(commonVertexShaderSource, cellFragmentShaderSource);
+        const wallShader = shaderManager.newShader(commonVertexShaderSource, wallFragmentShaderSource);
+        const emptyShader = shaderManager.newShader(commonVertexShaderSource, emptyFragmentShaderSource);
+        return new WorldRenderer(shaderManager, backgroundShader, cellShader, wallShader, emptyShader, worldState);
     }
 
     render() {
-        const gl = this.shaderManager.gl
-        gl.clearColor(0, 0, 0, 0)
-        gl.clearDepth(1)
-        gl.enable(gl.DEPTH_TEST)
-        gl.depthFunc(gl.LEQUAL)
+        const gl = this.shaderManager.gl;
+        gl.clearColor(0, 0, 0, 0);
+        gl.clearDepth(1);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
         if (this.config.layers.background)
-            this.renderBackground()
+            this.renderBackground();
         if (this.config.layers.cells)
-            this.renderCells()
+            this.renderCells();
+        if (this.config.layers.walls)
+            this.renderWalls();
+
+        this.renderBufferToCanvas();
     }
 
     /**
-     * From world coordinates to screen coordinates
+     * From world coordinates to screen coordinates.
      */
     project(worldPoint: vec2): vec2 {
         const projection = this.buildCameraTransform()
@@ -73,7 +83,7 @@ export default class WorldRenderer {
     }
 
     /**
-     * From screen coordinates to world coordinates
+     * From screen coordinates to world coordinates.
      */
     unproject(screenPoint: vec2): vec2 {
         return vec2.transformMat4(vec2.create(), screenPoint, this.buildCameraTransform())
@@ -83,25 +93,67 @@ export default class WorldRenderer {
         this.shaderManager.destroy();
     }
 
-    private renderCells() {
-        if (!this.worldState)
-            return
+    private renderBufferToCanvas() {
+        const gl = this.shaderManager.gl;
+        gl.useProgram(this.emptyShader);
 
+        this.setupVertexShader(this.emptyShader);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+        gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture);
+        gl.uniform1i(gl.getUniformLocation(this.emptyShader, 'image'), 0);
+
+        this.setDrawToCanvas();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    private renderWalls() {
         const gl = this.shaderManager.gl
-        gl.useProgram(this.cellShader)
+        gl.useProgram(this.wallShader)
 
-        const vertexAttributeLoc = gl.getAttribLocation(this.cellShader, 'vertexPosition')
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
-        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
-        gl.enableVertexAttribArray(vertexAttributeLoc)
+        this.setupVertexShader(this.wallShader);
 
         const viewMatrix = this.buildViewTransform()
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.cellShader, 'viewMatrix'), false, viewMatrix)
-        gl.uniform1f(gl.getUniformLocation(this.cellShader, 'time'), (Date.now() - this.startTime)/1000)
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.wallShader, 'viewMatrix'), false, viewMatrix)
 
-        gl.uniform2f(gl.getUniformLocation(this.cellShader, 'imageSize'), this.bufferTextureSize.x, this.bufferTextureSize.y)
+        gl.uniform2f(
+            gl.getUniformLocation(this.wallShader, 'imageSize'),
+            this.bufferTextureSize.x,
+            this.bufferTextureSize.y
+        );
 
-        for (const [index, cell] of this.worldState.cells) {
+        for (const wall of this.worldState!.walls.values()) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+            gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture);
+            gl.uniform1i(gl.getUniformLocation(this.wallShader, 'image'), 0);
+
+            gl.uniform2f(gl.getUniformLocation(this.wallShader, 'wall.a'), wall.a.x, wall.a.y);
+            gl.uniform2f(gl.getUniformLocation(this.wallShader, 'wall.b'), wall.b.x, wall.b.y);
+
+            this.setDrawToBufferTexture();
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            this.swapBuffers();
+        }
+    }
+
+    private renderCells() {
+        const gl = this.shaderManager.gl;
+        gl.useProgram(this.cellShader);
+
+        this.setupVertexShader(this.cellShader);
+
+        gl.uniform1f(gl.getUniformLocation(this.cellShader, 'time'), (Date.now() - this.startTime)/1000);
+        const viewMatrix = this.buildViewTransform();
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.cellShader, 'viewMatrix'), false, viewMatrix);
+
+        gl.uniform2f(
+            gl.getUniformLocation(this.cellShader, 'imageSize'),
+            this.bufferTextureSize.x,
+            this.bufferTextureSize.y
+        );
+
+        for (const cell of this.worldState!.cells.values()) {
             const cellRgba = WorldRenderer.cellPigmentsToRgba(
                 cell.genome.cyanPigment,
                 cell.genome.magentaPigment,
@@ -121,15 +173,19 @@ export default class WorldRenderer {
             gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius);
             gl.uniform4f(gl.getUniformLocation(this.cellShader, 'cell.bodyRgba'), ...cellRgba);
 
-            if (index == this.worldState.cells.size - 1)
-                this.setDrawToCanvas()
-            else
-                this.setDrawToBufferTexture()
-
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+            this.setDrawToBufferTexture();
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
             this.swapBuffers()
         }
+    }
+
+    private setupVertexShader(shader: WebGLShader) {
+        const gl = this.shaderManager.gl
+        const vertexAttributeLoc = gl.getAttribLocation(shader, 'vertexPosition')
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
+        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(vertexAttributeLoc)
     }
 
     private renderBackground() {
@@ -155,8 +211,7 @@ export default class WorldRenderer {
         gl.uniform2f(gl.getUniformLocation(this.backgroundShader, 'areaSize'), this.worldState.width, this.worldState.height)
         gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'lightIntensity'), this.worldState.lightIntensity)
 
-        this.setDrawToBufferTexture()
-
+        this.setDrawToBufferTexture();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
 
         this.swapBuffers()
@@ -209,14 +264,15 @@ export default class WorldRenderer {
     }
 
     private setDrawToBufferTexture() {
-        this.autoUpdateDrawBufferTexture()
-        const gl = this.shaderManager.gl
+        this.autoUpdateDrawBufferTexture();
+        const gl = this.shaderManager.gl;
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.targetBufferTexture, 0)
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.targetBufferTexture, 0);
     }
 
     private setDrawToCanvas() {
-        this.shaderManager.gl.bindFramebuffer(this.shaderManager.gl.FRAMEBUFFER, null);
+        const gl = this.shaderManager.gl;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
     private swapBuffers() {
