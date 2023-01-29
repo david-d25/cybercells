@@ -60,7 +60,7 @@ export default class World {
     }
 
     static TEMPORARY_DEBUG = (() => {
-        const world = new World(800, 600, new Vector2(), 0, 0, 0, 0, new Camera(new Vector2(0, 0), 800));
+        const world = new World(800, 600, new Vector2(0, 4), 0, 0.2, 0, 0, new Camera(new Vector2(0, 0), 800));
         world.add(new Cell(new Vector2(50, 50), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         world.add(new Cell(new Vector2(200, 120), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         world.add(new Cell(new Vector2(200, 300), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));

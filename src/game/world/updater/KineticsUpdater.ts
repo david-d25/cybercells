@@ -16,7 +16,6 @@ export default class KineticsUpdater implements Updater {
 
     update(delta: number): void {
         for (const cell of this.world.cells.values()) {
-            
             this.processGravity(cell, delta);
 
             for (const wall of this.world.walls.values())
@@ -38,13 +37,13 @@ export default class KineticsUpdater implements Updater {
 
     private processCellWallCollision(cell: Cell, wall: Wall, delta: number) {
         const intersections = Geometry.findLineAndCircleIntersections(cell.center, cell.radius, wall.a, wall.b);
-        if (intersections.size !== 0) {
+        if (intersections.length !== 0) {
             const projection = Geometry.projectPointOntoLine(cell.center, [wall.a, wall.b]);
             const oppositeForce = projection.to(cell.center).unit.times(cell.radius - projection.distance(cell.center));
             const depth = Geometry.clamp(1 - cell.center.distance(projection) / cell.radius, 0, 1);
             const hardnessCoefficient = Math.pow(cell.genome.hardness * depth + 1, cell.genome.hardness + 1);
             const oldSpeed = this.context.cellsSpeedBuffer.get(cell.id)!;
-            const newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient).times(delta));
+            const newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient * delta));
             this.context.cellsSpeedBuffer.set(cell.id, newSpeed);
         }
     }
@@ -58,8 +57,8 @@ export default class KineticsUpdater implements Updater {
                 cell.center, cell.radius, otherCell.center, otherCell.radius
             );
 
-            const pivot = intersections.size != 0
-                ? intersections.values().next().value.plus(intersections.values().next().value).div(2)
+            const pivot = intersections.length != 0
+                ? intersections[0].plus(intersections[1]).div(2)
                 : cell.center.plus(otherCell.center).div(2);
 
             const depth = Geometry.clamp(1 - cell.center.distance(pivot) / cell.radius, 0, 1);

@@ -3,7 +3,7 @@
 precision highp float;
 precision highp sampler2D;
 
-const float WALL_THICKNESS = 4.0;
+const float WALL_THICKNESS = 2.0;
 
 struct Wall {
     vec2 a;

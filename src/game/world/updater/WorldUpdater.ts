@@ -4,7 +4,7 @@ import UpdateContext from "@/game/world/updater/UpdateContext";
 import KineticsUpdater from "@/game/world/updater/KineticsUpdater";
 import ApplyContextUpdater from "@/game/world/updater/ApplyContextUpdater";
 import Updater from "@/game/world/updater/Updater";
-import ApplyKineticsUpdater from "@/game/world/updater/ApplyKineticsUpdater";
+import PositionUpdater from "@/game/world/updater/PositionUpdater";
 
 export default class WorldUpdater {
     constructor(
@@ -14,7 +14,7 @@ export default class WorldUpdater {
             new ResetContextUpdater(this.world, this.updateContext),
             new KineticsUpdater(this.world, this.updateContext),
             new ApplyContextUpdater(this.world, this.updateContext),
-            new ApplyKineticsUpdater(this.world)
+            new PositionUpdater(this.world)
         ]
     }
 

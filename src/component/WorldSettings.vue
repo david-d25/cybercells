@@ -7,7 +7,7 @@
     <SliderWithNumberInput class="slider-input" :min="0" :max="1.5" :step="0.01" v-model.number="world.density" :disabled="true"/>
 
     <InputLabel>Viscosity</InputLabel>
-    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.viscosity" :disabled="true"/>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.viscosity"/>
 
     <InputLabel>Light intensity</InputLabel>
     <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.lightIntensity" :disabled="true"/>

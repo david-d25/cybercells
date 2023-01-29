@@ -6,7 +6,7 @@ export default class Geometry {
         circleRadius: number,
         lineStart: Vector2,
         lineEnd: Vector2
-    ): Set<Vector2> {
+    ): Vector2[] {
         const v1 = lineEnd.minus(lineStart);
         const v2 = lineStart.minus(circleCenter);
         const b = -2 * v1.dot(v2);
@@ -15,15 +15,15 @@ export default class Geometry {
             Math.pow(b, 2) - 2 * c * (Math.pow(v2.x, 2) + Math.pow(v2.y, 2) - Math.pow(circleRadius, 2))
         );
         if (isNaN(d))
-            return new Set();
+            return [];
 
         const u1 = (b - d) / c;
         const u2 = (b + d) / c;
-        const result = new Set<Vector2>();
+        const result = [];
         if (u1 >= 0 && u1 <= 1)
-            result.add(new Vector2(lineStart.x + v1.x * u1, lineStart.y + v1.y * u1));
+            result.push(new Vector2(lineStart.x + v1.x * u1, lineStart.y + v1.y * u1));
         if (u2 >= 0 && u2 <= 1)
-            result.add(new Vector2(lineStart.x + v1.x * u2, lineStart.y + v1.y * u2));
+            result.push(new Vector2(lineStart.x + v1.x * u2, lineStart.y + v1.y * u2));
         return result;
     }
 
@@ -32,10 +32,10 @@ export default class Geometry {
         circle1Radius: number,
         circle2Center: Vector2,
         circle2Radius: number
-    ): Set<Vector2> {
+    ): Vector2[] {
         const distance = circle1Center.distance(circle2Center)
         if (distance > circle1Radius + circle2Radius)
-            return new Set();
+            return [];
 
         const a = circle1Center
             .plus(circle2Center)
@@ -60,9 +60,9 @@ export default class Geometry {
         );
 
         if (a.isNaN() || b.isNaN())
-            return new Set();
+            return [];
 
-        return new Set([a.plus(b), a.minus(b)]);
+        return [a.plus(b), a.minus(b)];
     }
 
     static findLinesIntersection(
