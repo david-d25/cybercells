@@ -27,7 +27,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['update:modelValue'])
 const textInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
-const value = ref<number>(0)
+const value = ref<number>(props.modelValue || 0)
 
 watch(props, () => {
   if (props.modelValue != null)
