@@ -55,11 +55,11 @@ export default class WorldRenderer {
 
     render() {
         const gl = this.shaderManager.gl;
-        gl.clearColor(0, 0, 0, 0);
-        gl.clearDepth(1);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
 
+        this.setDrawToBufferTexture();
+        this.swapBuffers();
+
+        gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
@@ -186,6 +186,10 @@ export default class WorldRenderer {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
         gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
         gl.enableVertexAttribArray(vertexAttributeLoc)
+        const textureCoordinateLoc = gl.getAttribLocation(shader, 'textureCoordinate')
+        gl.enableVertexAttribArray(textureCoordinateLoc)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.drawBufferTextureUv)
+        gl.vertexAttribPointer(textureCoordinateLoc, 2, gl.FLOAT, false, 0, 0)
     }
 
     private renderBackground() {
@@ -195,15 +199,7 @@ export default class WorldRenderer {
         const gl = this.shaderManager.gl
         gl.useProgram(this.backgroundShader)
 
-        const vertexAttributeLoc = gl.getAttribLocation(this.backgroundShader, 'vertexPosition')
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
-        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
-        gl.enableVertexAttribArray(vertexAttributeLoc)
-
-        const textureCoordinateLoc = gl.getAttribLocation(this.backgroundShader, 'textureCoordinate')
-        gl.enableVertexAttribArray(textureCoordinateLoc)
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.drawBufferTextureUv)
-        gl.vertexAttribPointer(textureCoordinateLoc, 2, gl.FLOAT, false, 0, 0)
+        this.setupVertexShader(this.backgroundShader);
 
         const viewMatrix = this.buildViewTransform()
         gl.uniformMatrix4fv(gl.getUniformLocation(this.backgroundShader, 'viewMatrix'), false, viewMatrix)
