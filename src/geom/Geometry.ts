@@ -70,7 +70,7 @@ export default class Geometry {
         lineB: [Vector2, Vector2]
     ): Vector2 | null {
         const angle1Ratio = (lineA[1].y - lineA[0].y) / (lineA[1].x - lineA[0].x);
-        const angle2Ratio = (lineB[1].y - lineB[0].y) / (lineB[1].x - lineA[0].x);
+        const angle2Ratio = (lineB[1].y - lineB[0].y) / (lineB[1].x - lineB[0].x);
 
         if (isNaN(angle1Ratio) || isNaN(angle2Ratio) ||
             !isFinite(angle1Ratio) && !isFinite(angle2Ratio) ||
@@ -130,7 +130,7 @@ export default class Geometry {
         if (otherLine[0].x == otherLine[1].x)
             return null;
 
-        const otherAngleRatio = (otherLine[1].y - otherLine[1].y) / (otherLine[1].x - otherLine[0].x);
+        const otherAngleRatio = (otherLine[1].y - otherLine[0].y) / (otherLine[1].x - otherLine[0].x);
         const line2Offset = otherLine[0].y - otherAngleRatio * otherLine[0].x;
         const intersection = new Vector2(verticalLine[0].x, 0);
         intersection.y = otherAngleRatio * intersection.x + line2Offset;
