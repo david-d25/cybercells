@@ -18,11 +18,12 @@ export default class KineticsUpdater implements Updater {
         for (const cell of this.world.cells.values()) {
             this.processGravity(cell, delta);
 
-            for (const wall of this.world.walls.values())
-                this.processCellWallCollision(cell, wall, delta);
-
-            for (const otherCell of this.world.cells.values())
-                this.processCellsCollision(cell, otherCell, delta);
+            this.world.circleCast(cell.center, cell.radius).forEach(wo => {
+                if (wo instanceof Wall)
+                    this.processCellWallCollision(cell, wo, delta);
+                else if (wo instanceof Cell)
+                    this.processCellsCollision(cell, wo, delta);
+            })
 
             for (const connection of cell.connections.values())
                 this.processCellConnection(cell, connection, delta);

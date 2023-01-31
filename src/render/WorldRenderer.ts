@@ -9,6 +9,8 @@ import cellFragmentShaderSource from 'raw-loader!@/shaders/cell.frag';
 import wallFragmentShaderSource from 'raw-loader!@/shaders/wall.frag';
 import emptyFragmentShaderSource from 'raw-loader!@/shaders/empty.frag';
 import Vector2 from "@/geom/Vector2";
+import Cell from "@/game/world/object/Cell";
+import Wall from "@/game/world/object/Wall";
 
 export default class WorldRenderer {
     private readonly startTime = Date.now()
@@ -35,7 +37,7 @@ export default class WorldRenderer {
         private cellShader: WebGLShader,
         private wallShader: WebGLShader,
         private emptyShader: WebGLShader,
-        public worldState: World | null = null
+        public world: World | null = null
     ) {
         this.mainMesh = this.createMainMesh();
         this.drawBufferTextureUv = this.createDrawBufferTextureUv();
@@ -122,7 +124,7 @@ export default class WorldRenderer {
             this.bufferTextureSize.y
         );
 
-        for (const wall of this.worldState!.walls.values()) {
+        for (const wall of this.world!.walls.values()) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
             gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture);
             gl.uniform1i(gl.getUniformLocation(this.wallShader, 'image'), 0);
@@ -138,6 +140,9 @@ export default class WorldRenderer {
     }
 
     private renderCells() {
+        if (!this.world)
+            return
+
         const gl = this.shaderManager.gl;
         gl.useProgram(this.cellShader);
 
@@ -153,7 +158,7 @@ export default class WorldRenderer {
             this.bufferTextureSize.y
         );
 
-        for (const cell of this.worldState!.cells.values()) {
+        for (const cell of this.world!.cells.values()) {
             const cellRgba = WorldRenderer.cellPigmentsToRgba(
                 cell.genome.cyanPigment,
                 cell.genome.magentaPigment,
@@ -172,6 +177,43 @@ export default class WorldRenderer {
             gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.angle'), cell.angle);
             gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius);
             gl.uniform4f(gl.getUniformLocation(this.cellShader, 'cell.bodyRgba'), ...cellRgba);
+
+            let wallsStruct: {
+                a: Vector2,
+                b: Vector2
+            }[] = [];
+            let neighborsStruct: {
+                center: Vector2,
+                radius: number
+            }[] = [];
+
+            this.world.circleCast(cell.center, cell.radius).forEach(wo => {
+                if (wo instanceof Cell)
+                    neighborsStruct.push({
+                        center: wo.center,
+                        radius: wo.radius
+                    });
+                else if (wo instanceof Wall)
+                    wallsStruct.push({
+                        a: wo.a,
+                        b: wo.b
+                    });
+            });
+
+            neighborsStruct = neighborsStruct.slice(0, 32);
+            wallsStruct = wallsStruct.slice(0, 32);
+
+            neighborsStruct.forEach((neighbor, index) => {
+                gl.uniform2f(gl.getUniformLocation(this.cellShader, `neighbors[${index}].center`), neighbor.center.x, neighbor.center.y);
+                gl.uniform1f(gl.getUniformLocation(this.cellShader, `neighbors[${index}].radius`), neighbor.radius);
+            })
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'neighborsSize'), neighborsStruct.length);
+
+            wallsStruct.forEach((wall, index) => {
+                gl.uniform2f(gl.getUniformLocation(this.cellShader, `walls[${index}].a`), wall.a.x, wall.a.y);
+                gl.uniform2f(gl.getUniformLocation(this.cellShader, `walls[${index}].b`), wall.b.x, wall.b.y);
+            })
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'wallsSize'), wallsStruct.length);
 
             this.setDrawToBufferTexture();
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -193,7 +235,7 @@ export default class WorldRenderer {
     }
 
     private renderBackground() {
-        if (!this.worldState)
+        if (!this.world)
             return
 
         const gl = this.shaderManager.gl
@@ -204,8 +246,8 @@ export default class WorldRenderer {
         const viewMatrix = this.buildViewTransform()
         gl.uniformMatrix4fv(gl.getUniformLocation(this.backgroundShader, 'viewMatrix'), false, viewMatrix)
         gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'time'), (Date.now() - this.startTime)/1000)
-        gl.uniform2f(gl.getUniformLocation(this.backgroundShader, 'areaSize'), this.worldState.width, this.worldState.height)
-        gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'lightIntensity'), this.worldState.lightIntensity)
+        gl.uniform2f(gl.getUniformLocation(this.backgroundShader, 'areaSize'), this.world.width, this.world.height)
+        gl.uniform1f(gl.getUniformLocation(this.backgroundShader, 'lightIntensity'), this.world.lightIntensity)
 
         this.setDrawToBufferTexture();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
@@ -214,14 +256,14 @@ export default class WorldRenderer {
     }
 
     private buildCameraTransform(): mat4 {
-        if (!this.worldState)
+        if (!this.world)
             throw new Error("Can't build camera transform: the world state is not set in renderer!")
 
         const canvasWidth = this.shaderManager.gl.canvas.width
         const canvasHeight = this.shaderManager.gl.canvas.height
 
         const result = mat4.create()
-        const camera = this.worldState.camera
+        const camera = this.world.camera
         const scale = camera.height/canvasHeight
         mat4.scale(result, result, [scale, scale, 1])
         mat4.translate(result, result, [camera.center.x/scale - canvasWidth/2, camera.center.y/scale - canvasHeight/2, 0])

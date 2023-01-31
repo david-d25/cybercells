@@ -29,5 +29,5 @@ void main() {
     color = mix(color, lightFunction(x, y), lightIntensity);
 
     if (x < 0.0 || y < 0.0 || x >= areaSize.x || y >= areaSize.y)
-        color = mix(color, vec4(0, 0, 0, 1), 0.2);
+        color = mix(color, vec4(0, 0, 0, 1), 0.3);
 }

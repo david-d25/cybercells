@@ -47,7 +47,7 @@ function updateRendererDummyWorld() {
     dummyWorld.cells.set(0, dummyCell)
     dummyWorld.camera = new Camera(new Vector2(), dummyCell.radius * 3)
   }
-  renderer.worldState = dummyWorld
+  renderer.world = dummyWorld
 }
 
 function onCanvasResize() {

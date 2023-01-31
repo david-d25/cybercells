@@ -1,17 +1,13 @@
 <template>
   <div class="c-time-control">
-    <HudButton class="button pause-play-button"
-               border-radius="default 0 0 default"
-               border-width="default 0.5px default default"
-               @click="onPausePlayButtonClick"
-    >
+    <HudButton class="button pause-play-button" @click="onPausePlayButtonClick">
       <img class="icon" src="@public/icon/time_control/pause.svg" alt="pause icon" v-if="updater.simulationActive">
       <img class="icon" src="@public/icon/time_control/play.svg" alt="play icon" v-else>
     </HudButton>
 
     <HudButton class="button play-1x-button"
-               border-radius="0"
-               border-width="default 0.5px"
+               border-radius="default 0 0 default"
+               border-width="default 0.5px default default"
                :active="updater.simulationSpeed === 1"
                @click="() => onSpeedButtonClick(1)"
     >
@@ -75,6 +71,10 @@ function onSpeedButtonClick(speed: number) {
 
   .icon {
     width: 100%;
+  }
+
+  .pause-play-button {
+    margin-right: 10px;
   }
 }
 </style>

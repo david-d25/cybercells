@@ -4,6 +4,7 @@ import Cell from "@/game/world/object/Cell";
 import Wall from "@/game/world/object/Wall";
 import Genome from "@/game/Genome";
 import Camera from "@/game/Camera";
+import Geometry from "@/geom/Geometry";
 
 export default class World {
     constructor(
@@ -52,7 +53,63 @@ export default class World {
     }
 
     public getLightIntensityAtPoint(point: Vector2) {
+        // TODO in future
+    }
+
+    public getRadiationIntensityAtPoint(point: Vector2) {
+        // TODO in future
+    }
+
+    initKdTree() {
         // TODO
+    }
+
+    dropKdTree() {
+        // TODO
+    }
+
+    // TODO use K-d tree (maybe with a separate managing object)
+    rayCast(a: Vector2, b: Vector2): WorldObject[] {
+        const result: WorldObject[] = [];
+
+        for (const it of this.walls.values()) {
+            if (Geometry.findLinesIntersection([it.a, it.b], [a, b]))
+                result.push(it);
+        }
+
+        for (const it of this.cells.values()) {
+            if (Geometry.findLineAndCircleIntersections(it.center, it.radius, a, b).length != 0)
+                result.push(it);
+        }
+
+        for (const it of this.food.values()) {
+            if (Geometry.findLineAndCircleIntersections(it.center, it.radius, a, b).length != 0)
+                result.push(it);
+        }
+
+        return result;
+    }
+
+    // TODO use K-d Tree (maybe with a separate managing object)
+    circleCast(center: Vector2, radius: number): WorldObject[] {
+        const result: WorldObject[] = [];
+
+        for (const it of this.walls.values()) {
+            if (Geometry.findLineAndCircleIntersections(center, radius, it.a, it.b).length != 0)
+                result.push(it);
+        }
+
+        for (const it of this.cells.values()) {
+            if (Geometry.findCirclesIntersections(center, radius, it.center, it.radius).length != 0)
+                result.push(it);
+        }
+
+        for (const it of this.food.values()) {
+            if (Geometry.findCirclesIntersections(center, radius, it.center, it.radius).length != 0)
+                result.push(it);
+        }
+
+        return result;
     }
 
     static getDefault() {

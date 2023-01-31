@@ -10,6 +10,7 @@ export default class WorldUpdater {
     constructor(
         private world: World
     ) {
+        this.updateContext = new UpdateContext();
         this.updatePipeline = [
             new ResetContextUpdater(this.world, this.updateContext),
             new KineticsUpdater(this.world, this.updateContext),
@@ -21,7 +22,7 @@ export default class WorldUpdater {
     static readonly SIMULATION_TICK_FIXED_DELTA = 16;
     static readonly SIMULATION_SPEED_FACTOR = 5;
 
-    private readonly updateContext = new UpdateContext();
+    private readonly updateContext: UpdateContext
     private readonly updatePipeline: Updater[]
 
     simulationSpeed = 1;
