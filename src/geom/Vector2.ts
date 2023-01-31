@@ -40,7 +40,7 @@ export default class Vector2 {
     }
 
     dot(that: Vector2): number {
-        return this.x * that.x + this.y + that.y
+        return this.x * that.x + this.y * that.y
     }
 
     to(that: Vector2): Vector2 {
