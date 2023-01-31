@@ -11,6 +11,7 @@ import emptyFragmentShaderSource from 'raw-loader!@/shaders/empty.frag';
 import Vector2 from "@/geom/Vector2";
 import Cell from "@/game/world/object/Cell";
 import Wall from "@/game/world/object/Wall";
+import Geometry from "@/geom/Geometry";
 
 export default class WorldRenderer {
     private readonly startTime = Date.now()
@@ -159,6 +160,19 @@ export default class WorldRenderer {
         );
 
         for (const cell of this.world!.cells.values()) {
+            const aabb = cell.aabb; // TODO scale by 2 to handle the bigger visual AABB
+            const [
+                [aabbMinX, aabbMinY],
+                [aabbMaxX, aabbMaxY]
+            ] = [
+                this.project([aabb.min.x, aabb.min.y]),
+                this.project([aabb.max.x, aabb.max.y])
+            ];
+            if (aabbMaxX < 0 || aabbMaxY < 0
+                || aabbMinX > gl.drawingBufferWidth
+                || aabbMinY > gl.drawingBufferHeight
+            ) continue;
+
             const cellRgba = WorldRenderer.cellPigmentsToRgba(
                 cell.genome.cyanPigment,
                 cell.genome.magentaPigment,
@@ -178,42 +192,33 @@ export default class WorldRenderer {
             gl.uniform1f(gl.getUniformLocation(this.cellShader, 'cell.radius'), cell.radius);
             gl.uniform4f(gl.getUniformLocation(this.cellShader, 'cell.bodyRgba'), ...cellRgba);
 
-            let wallsStruct: {
+            let obstaclesStruct: {
                 a: Vector2,
                 b: Vector2
             }[] = [];
-            let neighborsStruct: {
-                center: Vector2,
-                radius: number
-            }[] = [];
 
             this.world.circleCast(cell.center, cell.radius).forEach(wo => {
-                if (wo instanceof Cell)
-                    neighborsStruct.push({
-                        center: wo.center,
-                        radius: wo.radius
+                if (wo instanceof Cell) {
+                    const intersections = Geometry.findCirclesIntersections(cell.center, cell.radius, wo.center, wo.radius);
+                    obstaclesStruct.push({
+                        a: intersections[0],
+                        b: intersections[1]
                     });
-                else if (wo instanceof Wall)
-                    wallsStruct.push({
+                } else if (wo instanceof Wall) {
+                    obstaclesStruct.push({
                         a: wo.a,
                         b: wo.b
                     });
+                }
             });
 
-            neighborsStruct = neighborsStruct.slice(0, 32);
-            wallsStruct = wallsStruct.slice(0, 32);
+            obstaclesStruct = obstaclesStruct.slice(0, 32);
 
-            neighborsStruct.forEach((neighbor, index) => {
-                gl.uniform2f(gl.getUniformLocation(this.cellShader, `neighbors[${index}].center`), neighbor.center.x, neighbor.center.y);
-                gl.uniform1f(gl.getUniformLocation(this.cellShader, `neighbors[${index}].radius`), neighbor.radius);
+            obstaclesStruct.forEach((wall, index) => {
+                gl.uniform2f(gl.getUniformLocation(this.cellShader, `obstacles[${index}].a`), wall.a.x, wall.a.y);
+                gl.uniform2f(gl.getUniformLocation(this.cellShader, `obstacles[${index}].b`), wall.b.x, wall.b.y);
             })
-            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'neighborsSize'), neighborsStruct.length);
-
-            wallsStruct.forEach((wall, index) => {
-                gl.uniform2f(gl.getUniformLocation(this.cellShader, `walls[${index}].a`), wall.a.x, wall.a.y);
-                gl.uniform2f(gl.getUniformLocation(this.cellShader, `walls[${index}].b`), wall.b.x, wall.b.y);
-            })
-            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'wallsSize'), wallsStruct.length);
+            gl.uniform1i(gl.getUniformLocation(this.cellShader, 'obstaclesSize'), obstaclesStruct.length);
 
             this.setDrawToBufferTexture();
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -255,6 +260,7 @@ export default class WorldRenderer {
         this.swapBuffers()
     }
 
+    // TODO cache transform (maybe use separate Camera object)
     private buildCameraTransform(): mat4 {
         if (!this.world)
             throw new Error("Can't build camera transform: the world state is not set in renderer!")
@@ -270,6 +276,7 @@ export default class WorldRenderer {
         return result
     }
 
+    // TODO cache transform (maybe use separate Camera object)
     private buildViewTransform(): mat4 {
         const canvasHeight = this.shaderManager.gl.canvas.height
 

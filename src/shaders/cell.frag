@@ -7,8 +7,7 @@ const float POSITIVE_INFINITY = 1.0 / 0.0;
 const float NAN = 0.0 / 0.0;
 
 const float CELL_BORDER_WIDTH = 2.0;
-const int MAX_NEIGHBOR_CELLS = 32;
-const int MAX_WALLS = 32;
+const int MAX_OBSTACLES = 32;
 
 struct Cell {
     int id;
@@ -20,18 +19,7 @@ struct Cell {
     vec4 bodyRgba;
 };
 
-struct NeighborCell {
-    vec2 center;
-    float radius;
-};
-
 struct Obstacle {
-    vec2 a;
-    vec2 b;
-};
-
-struct CirclesIntersectionResult {
-    bool intersection;
     vec2 a;
     vec2 b;
 };
@@ -43,11 +31,8 @@ uniform float time;
 
 uniform Cell cell;
 
-uniform NeighborCell neighbors[MAX_NEIGHBOR_CELLS];
-uniform int neighborsSize;
-
-uniform Obstacle walls[MAX_WALLS];
-uniform int wallsSize;
+uniform Obstacle obstacles[MAX_OBSTACLES];
+uniform int obstaclesSize;
 
 in vec2 texel;
 out vec4 color;
@@ -63,42 +48,6 @@ vec2 projectPointOntoLine(vec2 p, vec2 lineStart, vec2 lineEnd) {
     if (a == b)
         return a;
     return (b - a) * dot(p - a, b - a) / dot(b - a, b - a) + a;
-}
-
-CirclesIntersectionResult findCirclesIntersections(
-    vec2 circle1Center,
-    float circle1Radius,
-    vec2 circle2Center,
-    float circle2Radius
-) {
-    CirclesIntersectionResult result;
-    float distance = length(circle1Center - circle2Center);
-
-    if (distance > circle1Radius + circle2Radius) {
-        result.intersection = false;
-        return result;
-    }
-
-    vec2 a =    (circle1Center + circle2Center) / 2.0
-                + (circle2Center - circle1Center) * (
-                    pow(circle1Radius, 2.0) - pow(circle2Radius, 2.0)
-                ) / 2.0 * pow(distance, 2.0);
-    vec2 b =    vec2(circle2Center.y - circle1Center.y, circle1Center.x - circle2Center.x) * 0.5 * sqrt(
-                    2.0 * (pow(circle1Radius, 2.0) + pow(circle2Radius, 2.0))
-                    / pow(distance, 2.0) - pow(pow(circle1Radius, 2.0) - pow(circle2Radius, 2.0), 2.0)
-                    / pow(distance, 4.0) - 1.0
-                );
-
-    if (any(isnan(a)) || any(isnan(b))) {
-        result.intersection = false;
-        return result;
-    }
-
-    result.a = a + b;
-    result.b = a - b;
-    result.intersection = true;
-
-    return result;
 }
 
 vec2 findVerticalLineIntersection(vec2 verticalStart, vec2 verticalEnd, vec2 otherStart, vec2 otherEnd) {
@@ -160,26 +109,10 @@ vec2 findLinesIntersections(vec2 line1Start, vec2 line1End, vec2 line2Start, vec
 float nearestObstacleDistance(vec2 p) {
     float result = POSITIVE_INFINITY;
 
-    for (int i = 0; i < neighborsSize; i++) {
-        NeighborCell neighbor = neighbors[i];
-        CirclesIntersectionResult intersection = findCirclesIntersections(
-        cell.center,
-        cell.radius,
-        neighbor.center,
-        neighbor.radius
-        );
-        if (intersection.intersection) {
-            vec2 projected = projectPointOntoLine(p, intersection.a, intersection.b);
-            float fractionalDistance = length(projected - intersection.a) / length(intersection.b - intersection.a) * sign(dot(intersection.b - intersection.a, projected - intersection.a));
-            if (fractionalDistance >= 0.0 && fractionalDistance < 1.0 && length(projected - p) < result)
-            result = length(projected - p);
-        }
-    }
-
-    for (int i = 0; i < wallsSize; i++) {
-        Obstacle wall = walls[i];
-        vec2 projected = projectPointOntoLine(p, wall.a, wall.b);
-        float fractionalDistance = length(projected - wall.a) / length(wall.b - wall.a) * sign(dot(wall.b - wall.a, projected - wall.a));
+    for (int i = 0; i < obstaclesSize; i++) {
+        Obstacle obstacle = obstacles[i];
+        vec2 projected = projectPointOntoLine(p, obstacle.a, obstacle.b);
+        float fractionalDistance = length(projected - obstacle.a) / length(obstacle.b - obstacle.a) * sign(dot(obstacle.b - obstacle.a, projected - obstacle.a));
         if (fractionalDistance >= 0.0 && fractionalDistance < 1.0 && length(projected - p) < result)
             result = length(projected - p);
     }
@@ -192,23 +125,9 @@ bool isPointBehindLine(vec2 p, vec2 lineStart, vec2 lineEnd) {
 }
 
 bool isPointBehindObstacles(vec2 p) {
-    for (int i = 0; i < neighborsSize; i++) {
-        NeighborCell neighbor = neighbors[i];
-        CirclesIntersectionResult intersection = findCirclesIntersections(
-            cell.center,
-            cell.radius,
-            neighbor.center,
-            neighbor.radius
-        );
-        if (intersection.intersection) {
-            if (isPointBehindLine(p, intersection.a, intersection.b))
-                return true;
-        }
-    }
-
-    for (int i = 0; i < wallsSize; i++) {
-        Obstacle wall = walls[i];
-        if (isPointBehindLine(p, wall.a, wall.b))
+    for (int i = 0; i < obstaclesSize; i++) {
+        Obstacle obstacle = obstacles[i];
+        if (isPointBehindLine(p, obstacle.a, obstacle.b))
             return true;
     }
 

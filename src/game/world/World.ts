@@ -69,6 +69,7 @@ export default class World {
     }
 
     // TODO use K-d tree (maybe with a separate managing object)
+    // TODO return intersection points
     rayCast(a: Vector2, b: Vector2): WorldObject[] {
         const result: WorldObject[] = [];
 
@@ -91,6 +92,7 @@ export default class World {
     }
 
     // TODO use K-d Tree (maybe with a separate managing object)
+    // TODO return intersection points
     circleCast(center: Vector2, radius: number): WorldObject[] {
         const result: WorldObject[] = [];
 

@@ -1,7 +1,9 @@
 import Vector2 from "@/geom/Vector2";
 import Genome from "@/game/Genome";
+import {HasAabb} from "@/geom/HasAabb";
+import Aabb from "@/geom/Aabb";
 
-export default class Cell implements WorldObject {
+export default class Cell implements WorldObject, HasAabb {
     id = -1
 
     constructor(
@@ -18,6 +20,10 @@ export default class Cell implements WorldObject {
 
     public get radius() {
         return Math.sqrt(this.mass)
+    }
+
+    get aabb() {
+        return new Aabb(this.center.minus(this.radius), this.center.plus(this.radius))
     }
 }
 

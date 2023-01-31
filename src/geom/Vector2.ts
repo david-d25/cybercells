@@ -13,12 +13,18 @@ export default class Vector2 {
         return sqrt(pow(this.x, 2) + pow(this.y, 2))
     }
 
-    plus(that: Vector2): Vector2 {
-        return new Vector2(this.x + that.x, this.y + that.y)
+    plus(rvalue: Vector2 | number): Vector2 {
+        if (rvalue instanceof Vector2)
+            return new Vector2(this.x + rvalue.x, this.y + rvalue.y)
+        else
+            return new Vector2(this.x + rvalue, this.y + rvalue)
     }
 
-    minus(that: Vector2): Vector2 {
-        return new Vector2(this.x - that.x, this.y - that.y)
+    minus(rvalue: Vector2 | number): Vector2 {
+        if (rvalue instanceof Vector2)
+            return new Vector2(this.x - rvalue.x, this.y - rvalue.y)
+        else
+            return new Vector2(this.x - rvalue, this.y - rvalue)
     }
 
     times(factor: Vector2 | number): Vector2 {
