@@ -69,8 +69,11 @@ export default class Geometry {
         lineA: [Vector2, Vector2],
         lineB: [Vector2, Vector2]
     ): Vector2 | null {
-        const angle1Ratio = (lineA[1].y - lineA[0].y) / (lineA[1].x - lineA[0].x);
-        const angle2Ratio = (lineB[1].y - lineB[0].y) / (lineB[1].x - lineB[0].x);
+        const lineAVector = lineA[0].to(lineA[1]);
+        const lineBVector = lineB[0].to(lineB[1]);
+
+        const angle1Ratio = lineAVector.y / lineAVector.x;
+        const angle2Ratio = lineBVector.y / lineBVector.x;
 
         if (isNaN(angle1Ratio) || isNaN(angle2Ratio) ||
             !isFinite(angle1Ratio) && !isFinite(angle2Ratio) ||
@@ -88,21 +91,13 @@ export default class Geometry {
         const intersection = new Vector2((lineBOffset - lineAOffset) / (angle1Ratio - angle2Ratio), 0);
         intersection.y = angle1Ratio * intersection.x + lineAOffset;
 
-        const avgAPoint = lineA[0].plus(lineA[1]).div(2);
-        const lineARect = new Vector2(
-            Math.abs(lineA[0].x - lineA[1].x),
-            Math.abs(lineA[0].y - lineA[1].y)
-        );
-        const avgBPoint = lineB[0].plus(lineB[1]).div(2);
-        const lineBRect = new Vector2(
-            Math.abs(lineB[0].x - lineB[1].x),
-            Math.abs(lineB[0].y - lineB[1].y)
-        );
+        const v1 = lineA[0].to(intersection);
+        const v2 = lineB[0].to(intersection);
         return (
-            Math.abs(intersection.x - avgAPoint.x) <= lineARect.x/2 &&
-            Math.abs(intersection.y - avgAPoint.y) <= lineARect.y/2 &&
-            Math.abs(intersection.x - avgBPoint.x) <= lineBRect.x/2 &&
-            Math.abs(intersection.y - avgBPoint.y) <= lineBRect.y/2
+            lineAVector.dot(v1) >= 0 &&
+            lineAVector.dot(v1) <= lineAVector.dot(lineAVector) &&
+            lineBVector.dot(v2) >= 0.0 &&
+            lineBVector.dot(v2) <= lineBVector.dot(lineBVector)
         ) ? intersection : null;
     }
 

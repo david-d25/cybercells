@@ -54,8 +54,8 @@ vec2 findVerticalLineIntersection(vec2 verticalStart, vec2 verticalEnd, vec2 oth
     if (otherStart.x == otherEnd.x)
         return vec2(NAN);
 
-    float otherAngleRatio = (otherEnd.y - otherStart.y) / (otherEnd.x - verticalStart.x);
-    float otherOffset = verticalStart.y - otherAngleRatio * otherStart.x;
+    float otherAngleRatio = (otherEnd.y - otherStart.y) / (otherEnd.x - otherStart.x);
+    float otherOffset = otherStart.y - otherAngleRatio * otherStart.x;
     vec2 intersection = vec2(verticalStart.x, 0);
     intersection.y = otherAngleRatio * intersection.x + otherOffset;
     if (otherStart.x < intersection.x && otherEnd.x < intersection.x ||
@@ -67,8 +67,11 @@ vec2 findVerticalLineIntersection(vec2 verticalStart, vec2 verticalEnd, vec2 oth
 }
 
 vec2 findLinesIntersections(vec2 line1Start, vec2 line1End, vec2 line2Start, vec2 line2End) {
-    float angle1Ratio = (line1End.y - line1Start.y) / (line1End.x - line1Start.x);
-    float angle2Ratio = (line2End.y - line2Start.y) / (line2End.x - line2Start.x);
+    vec2 line1Vector = line1End - line1Start;
+    vec2 line2Vector = line2End - line2Start;
+
+    float angle1Ratio = line1Vector.y / line1Vector.x;
+    float angle2Ratio = line2Vector.y / line2Vector.x;
 
     if (isnan(angle1Ratio) || isnan(angle2Ratio)
         || isinf(angle1Ratio) && isinf(angle2Ratio)
@@ -86,23 +89,13 @@ vec2 findLinesIntersections(vec2 line1Start, vec2 line1End, vec2 line2Start, vec
     vec2 intersection = vec2((line2Offset - line1Offset) / (angle1Ratio - angle2Ratio), 0);
     intersection.y = angle1Ratio * intersection.x + line1Offset;
 
-    vec2 avg1Point = (line1Start + line1End) / 2.0;
-    vec2 line1Rect = vec2(
-        abs(line1Start.x - line1End.x),
-        abs(line1Start.y - line1End.y)
-    );
-
-    vec2 avg2Point = (line2Start + line2End) / 2.0;
-    vec2 line2Rect = vec2(
-        abs(line2Start.x - line2End.x),
-        abs(line2Start.y - line2End.y)
-    );
-
+    vec2 v1 = intersection - line1Start;
+    vec2 v2 = intersection - line2Start;
     return (
-        abs(intersection.x - avg1Point.x) <= line1Rect.x/2.0 &&
-        abs(intersection.y - avg1Point.y) <= line1Rect.y/2.0 &&
-        abs(intersection.x - avg2Point.x) <= line2Rect.x/2.0 &&
-        abs(intersection.y - avg2Point.y) <= line2Rect.y/2.0
+        dot(line1Vector, v1) >= 0.0 &&
+        dot(line1Vector, v1) <= dot(line1Vector, line1Vector) &&
+        dot(line2Vector, v2) >= 0.0 &&
+        dot(line2Vector, v2) <= dot(line2Vector, line2Vector)
     ) ? intersection : vec2(NAN);
 }
 
@@ -147,6 +140,7 @@ void main() {
     vec4 borderColor = mix(cell.bodyRgba, vec4(0, 0, 0, 1), 0.25);
     float centerDistance = sqrt(pow(x - cell.center.x, 2.0) + pow(y - cell.center.y, 2.0));
 
+    // This may be optimized to round through the obstacles array once per fragment
     if (centerDistance <= cell.radius && !isPointBehindObstacles(fragment.xy)) {
         layerColor = cell.bodyRgba;
 

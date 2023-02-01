@@ -60,14 +60,6 @@ export default class World {
         // TODO in future
     }
 
-    initKdTree() {
-        // TODO
-    }
-
-    dropKdTree() {
-        // TODO
-    }
-
     // TODO use K-d tree (maybe with a separate managing object)
     // TODO return intersection points
     rayCast(a: Vector2, b: Vector2): WorldObject[] {

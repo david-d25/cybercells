@@ -32,23 +32,28 @@ let canvas: HTMLCanvasElement
 let container: HTMLDivElement
 let renderer: WorldRenderer
 
+let canvasSizeObserver: ResizeObserver;
+let animationFrameRequest: number;
+
 const dragging = {
   dragMode: false,
   lastMouseWorldPoint: [0, 0]
 }
 
-onMounted(init);
-onBeforeUnmount(() => {
-  renderer.destroy()
-});
-
-function init() {
+onMounted(() => {
   canvas = canvasRef.value!
   container = containerRef.value!
-  renderer = WorldRenderer.init(canvas, world)
-  new ResizeObserver(onCanvasResize).observe(container)
+  renderer = WorldRenderer.init(canvas, world);
+  canvasSizeObserver = new ResizeObserver(onCanvasResize);
+  canvasSizeObserver.observe(canvas);
   renderingRoutine();
-}
+});
+
+onBeforeUnmount(() => {
+  canvasSizeObserver.disconnect();
+  window.cancelAnimationFrame(animationFrameRequest);
+  renderer.destroy()
+});
 
 function onWheel(event: WheelEvent) {
   const camera = world.camera
@@ -110,7 +115,7 @@ function handleDraggingEvent(event: WorldMouseEvent) {
 
 function renderingRoutine() {
   renderer.render()
-  window.requestAnimationFrame(renderingRoutine)
+  animationFrameRequest = window.requestAnimationFrame(renderingRoutine)
 }
 
 function onCanvasResize() {

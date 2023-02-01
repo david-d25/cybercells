@@ -270,7 +270,7 @@ export default class WorldRenderer {
 
         const result = mat4.create()
         const camera = this.world.camera
-        const scale = camera.height/canvasHeight
+        const scale = canvasHeight != 0 ? camera.height/canvasHeight : 1
         mat4.scale(result, result, [scale, scale, 1])
         mat4.translate(result, result, [camera.center.x/scale - canvasWidth/2, camera.center.y/scale - canvasHeight/2, 0])
         return result
