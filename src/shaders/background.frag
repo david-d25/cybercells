@@ -23,9 +23,10 @@ void main() {
     float x = fragment.x;
     float y = fragment.y;
 
-    float value = mod(floor(x/CHECKER_SIZE) + floor(y/CHECKER_SIZE), 2.0) == 0.0 ? 0.4 : 0.2;
-    color = vec4(value, value, value, 1);
-//    color = vec4(0.4, 0.7, 0.9, 1);
+//    float value = mod(floor(x/CHECKER_SIZE) + floor(y/CHECKER_SIZE), 2.0) == 0.0 ? 0.4 : 0.2;
+//    color = vec4(value, value, value, 1);
+//    color = vec4(0.6, 0.85, 0.9, 1);
+    color = vec4(0.2, 0.2, 0.2, 1);
     color = mix(color, lightFunction(x, y), lightIntensity);
 
     if (x < 0.0 || y < 0.0 || x >= areaSize.x || y >= areaSize.y)

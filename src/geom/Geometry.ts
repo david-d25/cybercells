@@ -96,7 +96,7 @@ export default class Geometry {
         return (
             lineAVector.dot(v1) >= 0 &&
             lineAVector.dot(v1) <= lineAVector.dot(lineAVector) &&
-            lineBVector.dot(v2) >= 0.0 &&
+            lineBVector.dot(v2) >= 0 &&
             lineBVector.dot(v2) <= lineBVector.dot(lineBVector)
         ) ? intersection : null;
     }

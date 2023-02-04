@@ -2,8 +2,6 @@
   <div class="c-genome-selector">
     <div :class="{ 'dropdown-opened': dropdownOpened }" v-click-outside="cancelSelection">
 
-      <InputLabel>Genome to edit</InputLabel>
-
       <div class="select-head">
         <CellGenomePreview class="select-head__preview" v-if="value" :genome="modelValue?.genome"/>
         <input class="select-head__name-input"

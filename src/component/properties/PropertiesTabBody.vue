@@ -1,5 +1,5 @@
 <template>
-  <div class="body-wr" v-if="activeTabName === props.name">
+  <div class="body-wr" v-show="activeTabName === props.name">
     <slot/>
   </div>
 </template>

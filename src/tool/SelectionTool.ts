@@ -6,9 +6,7 @@ export default class SelectionTool implements Tool {
     icon = require("@public/icon/tool/selection.svg")
     enabled = true
 
-    init(toolsManager: ToolsManager): void {
-
-    }
+    init(): void {}
 
     onSelect(): void {
 

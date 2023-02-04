@@ -36,7 +36,8 @@ let canvasSizeObserver: ResizeObserver;
 let animationFrameRequest: number;
 
 const dragging = {
-  dragMode: false,
+  dragged: false,
+  mouseDown: false,
   lastMouseWorldPoint: [0, 0]
 }
 
@@ -78,7 +79,7 @@ function onTouchEvent(event: TouchEvent) {
       const dps = window.devicePixelRatio
       const [ screenX, screenY ] = [x * dps, y * dps]
       let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
-      const worldEvent = new WorldMouseEvent(`world-${mouseEventType}`, screenX, screenY, worldX, worldY)
+      const worldEvent = new WorldMouseEvent(world, `world-${mouseEventType}`, screenX, screenY, worldX, worldY)
       handleDraggingEvent(worldEvent)
       emit(worldEvent.type, worldEvent)
     }
@@ -86,31 +87,35 @@ function onTouchEvent(event: TouchEvent) {
 }
 
 function onMouseEvent(event: MouseEvent) {
+  if (event.type === 'click' && dragging.dragged)
+    return;
   const dps = window.devicePixelRatio
   const [ screenX, screenY ] = [event.x * dps, event.y * dps]
   let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
 
-  const worldEvent = new WorldMouseEvent(`world-${event.type}`, screenX, screenY, worldX, worldY)
+  const worldEvent = new WorldMouseEvent(world, `world-${event.type}`, screenX, screenY, worldX, worldY)
   handleDraggingEvent(worldEvent)
   emit(worldEvent.type, worldEvent)
 }
 
 function handleDraggingEvent(event: WorldMouseEvent) {
   if (event.type === 'world-mousedown') {
-    dragging.dragMode = true
-    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ]
+    dragging.mouseDown = true;
+    dragging.dragged = false;
+    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ];
   }
 
-  if (event.type === 'world-mousemove' && dragging.dragMode) {
-    const [ prevX, prevY ] = dragging.lastMouseWorldPoint
-    world.camera.center.x += prevX - event.worldX
+  if (event.type === 'world-mousemove' && dragging.mouseDown) {
+    dragging.dragged = true;
+    const [ prevX, prevY ] = dragging.lastMouseWorldPoint;
+    world.camera.center.x += prevX - event.worldX;
     world.camera.center.y += prevY - event.worldY;
-    [ event.worldX, event.worldY ] = renderer.unproject([event.screenX, event.screenY])
-    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ]
+    [ event.worldX, event.worldY ] = renderer.unproject([event.screenX, event.screenY]);
+    dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ];
   }
 
   if (event.type === 'world-mouseup' || event.type === 'world-mouseleave')
-    dragging.dragMode = false
+    dragging.mouseDown = false;
 }
 
 function renderingRoutine() {

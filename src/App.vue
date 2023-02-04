@@ -1,5 +1,5 @@
 <template>
-  <WorldViewer/>
+  <WorldViewer @world-click="onWorldViewerEvent"/>
   <ControlsPanel class="controls-panel"/>
 </template>
 
@@ -17,6 +17,7 @@ import RemoveCellTool from "@/tool/RemoveCellTool";
 import Genome from "@/game/Genome";
 import SelectionTool from "@/tool/SelectionTool";
 import WorldUpdater from "@/game/world/updater/WorldUpdater";
+import WorldMouseEvent from "@/game/event/WorldMouseEvent";
 
 const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ];
 const world = World.TEMPORARY_DEBUG;
@@ -36,6 +37,11 @@ provide('worldUpdater', ref(worldUpdater));
 provide('genomeLibrary', ref(genomeLibrary));
 provide('appPreferences', ref(appPreferences));
 provide('toolsManager', ref(toolsManager));
+
+function onWorldViewerEvent(event: any) {
+  if (event instanceof WorldMouseEvent)
+    toolsManager.dispatchEvent(event);
+}
 </script>
 
 <style lang="scss">

@@ -106,6 +106,32 @@ export default class World {
         return result;
     }
 
+    // TODO use K-d Tree (maybe with a separate managing object)
+    pointCast(point: Vector2, threshold: number): WorldObject[] {
+        const result: WorldObject[] = [];
+        const error = 10e-6;
+
+        for (const it of this.walls.values()) {
+            const projected = Geometry.projectPointOntoLine(point, [it.a, it.b])
+            if (point.distance(projected) <= threshold) {
+                if (projected.distance(it.a) + projected.distance(it.b) <= it.a.distance(it.b) + threshold * 2 + error)
+                    result.push(it);
+            }
+        }
+
+        for (const it of this.cells.values()) {
+            if (it.center.distance(point) <= it.radius + threshold)
+                result.push(it);
+        }
+
+        for (const it of this.food.values()) {
+            if (it.center.distance(point) <= it.radius + threshold)
+                result.push(it);
+        }
+
+        return result;
+    }
+
     static getDefault() {
         return new World(0, 0, new Vector2(), 0, 0, 0, 0)
     }

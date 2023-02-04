@@ -138,15 +138,22 @@ void main() {
     vec4 layerColor = vec4(0);
 
     vec4 borderColor = mix(cell.bodyRgba, vec4(0, 0, 0, 1), 0.25);
-    float centerDistance = sqrt(pow(x - cell.center.x, 2.0) + pow(y - cell.center.y, 2.0));
+    float centerDistance = length(fragment.xy - cell.center);
 
     // This may be optimized to round through the obstacles array once per fragment
     if (centerDistance <= cell.radius && !isPointBehindObstacles(fragment.xy)) {
         layerColor = cell.bodyRgba;
 
-        if (centerDistance > cell.radius - CELL_BORDER_WIDTH
-            || nearestObstacleDistance(fragment.xy) <= CELL_BORDER_WIDTH)
+        if (
+            centerDistance > cell.radius - CELL_BORDER_WIDTH ||
+            nearestObstacleDistance(fragment.xy) <= CELL_BORDER_WIDTH
+        ) {
             layerColor = borderColor;
+        } else {
+            if (centerDistance <= sqrt(cell.radius)) {
+                layerColor = borderColor;
+            }
+        }
     }
 
     color = mix(background, vec4(layerColor.rgb, 1), layerColor.a);

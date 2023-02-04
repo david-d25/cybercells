@@ -3,6 +3,9 @@
 
     <PropertiesTabbedPanel class="properties-container">
       <template #tabs>
+        <PropertiesTab class="properties-tab" name="current-tool" v-if="toolsManager.getSelectedTool() instanceof AddCellTool">
+          <img class="properties-tab__icon" :src="toolsManager.getSelectedTool().icon" alt="Tab icon">
+        </PropertiesTab>
         <PropertiesTab class="properties-tab" name="genome-editor">
           <img class="properties-tab__icon" src="@public/icon/properties/genome-editor.svg" alt="Tab icon">
         </PropertiesTab>
@@ -17,6 +20,9 @@
         <PropertiesTabBody name="settings">
           <WorldSettings/>
         </PropertiesTabBody>
+        <PropertiesTabBody name="current-tool" v-if="toolsManager.getSelectedTool() instanceof AddCellTool">
+          <AddCellProperties/>
+        </PropertiesTabBody>
       </template>
     </PropertiesTabbedPanel>
 
@@ -25,8 +31,8 @@
                   v-for="tool in toolsManager.tools"
                   :key="tool.name"
                   :disabled="!tool.enabled"
-                  :active="toolsManager.currentTool === tool"
-                  @click="toolsManager.currentTool = tool">
+                  :active="toolsManager.getSelectedTool() === tool"
+                  @click="toolsManager.selectTool(tool)">
         <img class="tool-button__icon" :src="tool.icon" alt="Tool icon">
       </HudButton>
     </div>
@@ -37,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import {inject, watch} from "vue";
 import PropertiesTabbedPanel from "@/component/properties/PropertiesTabbedPanel.vue";
 import PropertiesTab from "@/component/properties/PropertiesTab.vue";
 import ToolsManager from "@/tool/ToolsManager";
@@ -46,6 +52,8 @@ import PropertiesTabBody from "@/component/properties/PropertiesTabBody.vue";
 import WorldSettings from "@/component/WorldSettings.vue";
 import GenomeLibraryEditor from "@/component/genome/GenomeLibraryEditor.vue";
 import TimeControl from "@/component/TimeControl.vue";
+import AddCellProperties from "@/component/properties/tool/AddCellToolProperties.vue";
+import AddCellTool from "@/tool/AddCellTool";
 
 const toolsManager = inject('toolsManager') as ToolsManager;
 </script>

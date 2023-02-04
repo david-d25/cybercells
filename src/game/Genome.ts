@@ -22,7 +22,9 @@ export default class Genome {
 
     children: [Genome, Genome] = [this, this];
 
-    deepCopy = this.copyRecursive
+    deepCopy(): Genome {
+        return this.copyRecursive();
+    }
 
     applyRadiationLocally() {
         // TODO
