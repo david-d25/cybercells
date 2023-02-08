@@ -2,7 +2,6 @@
   <PropertiesSection title="Genome editor">
     <GenomeSelector :library="library" v-model="selectedGenomeEntry"/>
     <GenomeEditor/>
-
   </PropertiesSection>
 </template>
 

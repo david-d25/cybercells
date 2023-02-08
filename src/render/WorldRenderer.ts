@@ -12,6 +12,7 @@ import Vector2 from "@/geom/Vector2";
 import Cell from "@/game/world/object/Cell";
 import Wall from "@/game/world/object/Wall";
 import Geometry from "@/geom/Geometry";
+import ColorUtil from "@/util/ColorUtil";
 
 export default class WorldRenderer {
     private readonly startTime = Date.now()
@@ -173,7 +174,7 @@ export default class WorldRenderer {
                 || aabbMinY > gl.drawingBufferHeight
             ) continue;
 
-            const cellRgba = WorldRenderer.cellPigmentsToRgba(
+            const cellRgba = ColorUtil.cmywToRgba(
                 cell.genome.cyanPigment,
                 cell.genome.magentaPigment,
                 cell.genome.yellowPigment,
@@ -342,16 +343,5 @@ export default class WorldRenderer {
             1.0, -1.0,
             -1.0, -1.0
         ])
-    }
-
-    private static cellPigmentsToRgba(
-        cyan: number,
-        magenta: number,
-        yellow: number,
-        white: number
-    ): [number, number, number, number] {
-        const [r, g, b] = [1 - cyan, 1 - magenta, 1 - yellow]; // todo use white
-        const a = 1 - (1 - cyan) * (1 - magenta) * (1 - yellow) * (1 - white);
-        return [r, g, b, a];
     }
 }

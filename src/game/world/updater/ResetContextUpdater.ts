@@ -9,12 +9,6 @@ export default class ResetContextUpdater implements Updater {
     ) {}
 
     update(): void {
-        this.context.cellsSpeedBuffer.clear();
-        this.context.cellsAngularSpeedBuffer.clear();
-
-        for (const cell of this.world.cells.values()) {
-            this.context.cellsSpeedBuffer.set(cell.id, cell.speed);
-            this.context.cellsAngularSpeedBuffer.set(cell.id, cell.angularSpeed);
-        }
+        // Use this method to reset context variables
     }
 }

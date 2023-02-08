@@ -6,6 +6,7 @@
         <PropertiesTab class="properties-tab" name="current-tool" v-if="toolsManager.getSelectedTool() instanceof AddCellTool">
           <img class="properties-tab__icon" :src="toolsManager.getSelectedTool().icon" alt="Tab icon">
         </PropertiesTab>
+        <div class="buttons-separator" v-if="toolsManager.getSelectedTool() instanceof AddCellTool"></div>
         <PropertiesTab class="properties-tab" name="genome-editor">
           <img class="properties-tab__icon" src="@public/icon/properties/genome-editor.svg" alt="Tab icon">
         </PropertiesTab>
@@ -94,6 +95,13 @@ const toolsManager = inject('toolsManager') as ToolsManager;
     .tool-button__icon {
       width: 100%;
     }
+  }
+
+  .buttons-separator {
+    display: inline-block;
+    height: 40px;
+    margin-left: 10px;
+    border-right: 1px solid grey;
   }
 
   .tool-button:last-child {

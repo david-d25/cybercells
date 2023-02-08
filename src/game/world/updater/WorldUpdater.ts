@@ -2,7 +2,6 @@ import World from "@/game/world/World";
 import ResetContextUpdater from "@/game/world/updater/ResetContextUpdater";
 import UpdateContext from "@/game/world/updater/UpdateContext";
 import KineticsUpdater from "@/game/world/updater/KineticsUpdater";
-import ApplyContextUpdater from "@/game/world/updater/ApplyContextUpdater";
 import Updater from "@/game/world/updater/Updater";
 import PositionUpdater from "@/game/world/updater/PositionUpdater";
 
@@ -14,7 +13,6 @@ export default class WorldUpdater {
         this.updatePipeline = [
             new ResetContextUpdater(this.world, this.updateContext),
             new KineticsUpdater(this.world, this.updateContext),
-            new ApplyContextUpdater(this.world, this.updateContext),
             new PositionUpdater(this.world)
         ]
     }

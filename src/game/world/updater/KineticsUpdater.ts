@@ -9,12 +9,17 @@ import UpdateContext from "@/game/world/updater/UpdateContext";
 export default class KineticsUpdater implements Updater {
     private static CELL_STICKINESS_DEPTH = 3
 
+    private cellsSpeedBuffer = new Map<number, Vector2>();
+    private cellsAngularSpeedBuffer = new Map<number, number>();
+
     constructor(
         private world: World,
         private context: UpdateContext,
     ) {}
 
     update(delta: number): void {
+        this.reset();
+
         for (const cell of this.world.cells.values()) {
             this.processGravity(cell, delta);
 
@@ -28,12 +33,39 @@ export default class KineticsUpdater implements Updater {
             for (const connection of cell.connections.values())
                 this.processCellConnection(cell, connection, delta);
         }
+
+        this.apply();
+    }
+    
+    private reset() {
+        this.cellsSpeedBuffer.clear();
+        this.cellsAngularSpeedBuffer.clear();
+
+        for (const cell of this.world.cells.values()) {
+            this.cellsSpeedBuffer.set(cell.id, cell.speed);
+            this.cellsAngularSpeedBuffer.set(cell.id, cell.angularSpeed);
+        }
+    }
+
+    private apply() {
+        this.cellsSpeedBuffer.forEach((value, key) => {
+            const cell = this.world.cells.get(key)
+            if (cell) {
+                cell.speed = value;
+            }
+        });
+        this.cellsAngularSpeedBuffer.forEach((value, key) => {
+            const cell = this.world.cells.get(key)
+            if (cell) {
+                cell.angularSpeed = value;
+            }
+        });
     }
 
     private processGravity(cell: Cell, delta: number) {
-        let speed = this.context.cellsSpeedBuffer.get(cell.id)!;
+        let speed = this.cellsSpeedBuffer.get(cell.id)!;
         speed = speed.plus(this.world.gravity.times(delta));
-        this.context.cellsSpeedBuffer.set(cell.id, speed);
+        this.cellsSpeedBuffer.set(cell.id, speed);
     }
 
     private processCellWallCollision(cell: Cell, wall: Wall, delta: number) {
@@ -43,9 +75,9 @@ export default class KineticsUpdater implements Updater {
             const oppositeForce = projection.to(cell.center).unit.times(cell.radius - projection.distance(cell.center));
             const depth = Geometry.clamp(1 - cell.center.distance(projection) / cell.radius, 0, 1);
             const hardnessCoefficient = Math.pow(cell.genome.hardness * depth + 1, cell.genome.hardness + 1);
-            const oldSpeed = this.context.cellsSpeedBuffer.get(cell.id)!;
+            const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
             const newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient * delta));
-            this.context.cellsSpeedBuffer.set(cell.id, newSpeed);
+            this.cellsSpeedBuffer.set(cell.id, newSpeed);
         }
     }
 
@@ -67,7 +99,7 @@ export default class KineticsUpdater implements Updater {
             const thisMassCoefficient = cell.mass / massSum;
             const oppositeForce = pivot.to(cell.center).unit.times(cell.radius - pivot.distance(cell.center));
             const hardnessCoefficient = Math.pow(cell.genome.hardness * depth + 1, cell.genome.hardness + 1);
-            const oldSpeed = this.context.cellsSpeedBuffer.get(cell.id)!;
+            const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
             const newSpeed = oldSpeed.plus(
                 oppositeForce
                     .times(hardnessCoefficient)
@@ -78,7 +110,7 @@ export default class KineticsUpdater implements Updater {
                             .times(cell.genome.hardness)
                     ).times(delta)
             );
-            this.context.cellsSpeedBuffer.set(cell.id, newSpeed);
+            this.cellsSpeedBuffer.set(cell.id, newSpeed);
         }
     }
 
@@ -121,12 +153,12 @@ export default class KineticsUpdater implements Updater {
         const projectedDistance = Math.sin(directionRelativeAngle) * impulseOriginDistance;
         const translationImpactCoefficient = 1 / (Math.pow(projectedDistance / cell.radius, 2) + 1);
         const rotationImpactCoefficient = 1 - translationImpactCoefficient;
-        const oldSpeed = this.context.cellsSpeedBuffer.get(cell.id)!;
+        const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
         const newSpeed = oldSpeed.plus(impulseDirection.times(translationImpactCoefficient));
-        const oldAngularSpeed = this.context.cellsAngularSpeedBuffer.get(cell.id)!;
+        const oldAngularSpeed = this.cellsAngularSpeedBuffer.get(cell.id)!;
         const newAngularSpeed = oldAngularSpeed
             - Math.atan(impulseDirection.length / projectedDistance) * rotationImpactCoefficient;
-        this.context.cellsSpeedBuffer.set(cell.id, newSpeed);
-        this.context.cellsAngularSpeedBuffer.set(cell.id, newAngularSpeed);
+        this.cellsSpeedBuffer.set(cell.id, newSpeed);
+        this.cellsAngularSpeedBuffer.set(cell.id, newAngularSpeed);
     }
 }

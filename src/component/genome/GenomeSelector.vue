@@ -162,6 +162,7 @@ function resetNameInput() {
     position: absolute;
     border-radius: 0 0 3px 3px;
     background: var(--properties-input-bg);
+    z-index: 1;
     overflow: hidden;
   }
 
