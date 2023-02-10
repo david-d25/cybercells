@@ -11,6 +11,9 @@
 
     <InputLabel>Light intensity</InputLabel>
     <SliderWithNumberInput class="slider-input" :min="0" :max="0.8" :step="0.01" v-model.number="world.lightIntensity" :disabled="true"/>
+
+    <InputLabel>Food spawn rate</InputLabel>
+    <SliderWithNumberInput class="slider-input" :min="0" :max="100" :step="0.01" v-model.number="world.foodSpawnRate"/>
   </PropertiesSection>
 </template>
 

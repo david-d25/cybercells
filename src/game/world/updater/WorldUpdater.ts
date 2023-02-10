@@ -4,6 +4,7 @@ import UpdateContext from "@/game/world/updater/UpdateContext";
 import KineticsUpdater from "@/game/world/updater/KineticsUpdater";
 import Updater from "@/game/world/updater/Updater";
 import PositionUpdater from "@/game/world/updater/PositionUpdater";
+import FoodSpawnUpdater from "@/game/world/updater/FoodSpawnUpdater";
 
 export default class WorldUpdater {
     constructor(
@@ -13,7 +14,9 @@ export default class WorldUpdater {
         this.updatePipeline = [
             new ResetContextUpdater(this.world, this.updateContext),
             new KineticsUpdater(this.world, this.updateContext),
-            new PositionUpdater(this.world)
+            new PositionUpdater(this.world),
+            new FoodSpawnUpdater(this.world),
+            // cell updater
         ]
     }
 

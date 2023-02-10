@@ -7,6 +7,7 @@ import commonVertexShaderSource from 'raw-loader!@/shaders/common.vert';
 import backgroundFragmentShaderSource from 'raw-loader!@/shaders/background.frag';
 import cellFragmentShaderSource from 'raw-loader!@/shaders/cell.frag';
 import wallFragmentShaderSource from 'raw-loader!@/shaders/wall.frag';
+import foodFragmentShaderSource from 'raw-loader!@/shaders/food.frag';
 import emptyFragmentShaderSource from 'raw-loader!@/shaders/empty.frag';
 import Vector2 from "@/geom/Vector2";
 import Cell from "@/game/world/object/Cell";
@@ -15,6 +16,8 @@ import Geometry from "@/geom/Geometry";
 import ColorUtil from "@/util/ColorUtil";
 
 export default class WorldRenderer {
+    private static readonly MAX_FOOD_PER_DRAW = 256;
+
     private readonly startTime = Date.now()
 
     private readonly mainMesh: WebGLBuffer
@@ -29,7 +32,8 @@ export default class WorldRenderer {
         layers: {
             background: true,
             walls: true,
-            cells: true
+            cells: true,
+            food: true
         }
     }
 
@@ -38,6 +42,7 @@ export default class WorldRenderer {
         private backgroundShader: WebGLShader,
         private cellShader: WebGLShader,
         private wallShader: WebGLShader,
+        private foodShader: WebGLShader,
         private emptyShader: WebGLShader,
         public world: World | null = null
     ) {
@@ -53,8 +58,9 @@ export default class WorldRenderer {
         const backgroundShader = shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource);
         const cellShader = shaderManager.newShader(commonVertexShaderSource, cellFragmentShaderSource);
         const wallShader = shaderManager.newShader(commonVertexShaderSource, wallFragmentShaderSource);
+        const foodShader = shaderManager.newShader(commonVertexShaderSource, foodFragmentShaderSource);
         const emptyShader = shaderManager.newShader(commonVertexShaderSource, emptyFragmentShaderSource);
-        return new WorldRenderer(shaderManager, backgroundShader, cellShader, wallShader, emptyShader, worldState);
+        return new WorldRenderer(shaderManager, backgroundShader, cellShader, wallShader, foodShader, emptyShader, worldState);
     }
 
     render() {
@@ -69,6 +75,8 @@ export default class WorldRenderer {
 
         if (this.config.layers.background)
             this.renderBackground();
+        if (this.config.layers.food)
+            this.renderFood();
         if (this.config.layers.cells)
             this.renderCells();
         if (this.config.layers.walls)
@@ -111,6 +119,42 @@ export default class WorldRenderer {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    private renderFood() {
+        const gl = this.shaderManager.gl
+        gl.useProgram(this.foodShader);
+
+        this.setupVertexShader(this.foodShader);
+
+        const viewMatrix = this.buildViewTransform();
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.foodShader, 'viewMatrix'), false, viewMatrix);
+
+        gl.uniform2f(
+            gl.getUniformLocation(this.foodShader, 'imageSize'),
+            this.bufferTextureSize.x,
+            this.bufferTextureSize.y
+        );
+
+        const foodIterator = this.world!.food.values();
+        for (let chunkStart = 0; chunkStart < this.world!.food.size; chunkStart += WorldRenderer.MAX_FOOD_PER_DRAW) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+            gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture);
+            gl.uniform1i(gl.getUniformLocation(this.foodShader, 'image'), 0);
+
+            const remainingFoodToDraw = Math.min(chunkStart + WorldRenderer.MAX_FOOD_PER_DRAW, this.world!.food.size);
+            for (let i = chunkStart; i < remainingFoodToDraw; i++) {
+                const food = foodIterator.next().value;
+                gl.uniform2f(gl.getUniformLocation(this.foodShader, `food[${i}].center`), food.center.x, food.center.y);
+                gl.uniform1f(gl.getUniformLocation(this.foodShader, `food[${i}].radius`), food.radius);
+            }
+            gl.uniform1i(gl.getUniformLocation(this.foodShader, `foodNumber`), remainingFoodToDraw);
+
+            this.setDrawToBufferTexture();
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            this.swapBuffers();
+        }
+    }
+
     private renderWalls() {
         const gl = this.shaderManager.gl
         gl.useProgram(this.wallShader)
@@ -118,7 +162,7 @@ export default class WorldRenderer {
         this.setupVertexShader(this.wallShader);
 
         const viewMatrix = this.buildViewTransform()
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.wallShader, 'viewMatrix'), false, viewMatrix)
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.wallShader, 'viewMatrix'), false, viewMatrix);
 
         gl.uniform2f(
             gl.getUniformLocation(this.wallShader, 'imageSize'),

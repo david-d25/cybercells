@@ -22,6 +22,8 @@ export default class World {
     public cells: Map<number, Cell> = new Map()
     public walls: Map<number, Wall> = new Map()
 
+    public foodSpawnRate: number = 0;
+
     private idCounter = 0;
 
     public newId() {
@@ -141,6 +143,7 @@ export default class World {
         for (let i = 0; i < 50; i++) {
             world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         }
+        world.camera.center = new Vector2(400, 300);
         world.add(new Wall(new Vector2(0, 0), new Vector2(0, world.height)));
         world.add(new Wall(new Vector2(0, world.height), new Vector2(world.width, world.height)));
         world.add(new Wall(new Vector2(world.width, world.height), new Vector2(world.width, 0)));
