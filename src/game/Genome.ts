@@ -1,8 +1,9 @@
 import CellType from "@/game/CellType";
+import World from "@/game/world/World";
 
 export default class Genome {
     private constructor(
-        public type: CellType = CellType.FLAGELLOCYTE,
+        public type: CellType = CellType.PHAGOCYTE,
         public cyanPigment: number = 0,
         public magentaPigment: number = 0,
         public yellowPigment: number = 0,
@@ -26,7 +27,7 @@ export default class Genome {
         return this.copyRecursive();
     }
 
-    applyRadiationLocally() {
+    applyRadiation(world: World, amount: number) {
         // TODO
     }
 
@@ -36,9 +37,9 @@ export default class Genome {
 
     static newSampleGenome(): Genome {
         const result = new Genome();
-        result.type = CellType.FLAGELLOCYTE;
+        result.type = CellType.PHAGOCYTE;
         result.hardness = 0.6;
-        result.splitMass = 350;
+        result.splitMass = 420;
         result.child1KeepConnections = true;
         result.child2KeepConnections = true;
         result.nutritionPriority = 1;

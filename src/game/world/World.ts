@@ -10,19 +10,31 @@ export default class World {
     constructor(
         public width: number,
         public height: number,
-        public gravity: Vector2,
-        public density: number,
-        public viscosity: number,
-        public radiation: number,
-        public lightIntensity: number,
-        public camera: Camera = Camera.NULL
     ) {}
 
     public food: Map<number, Food> = new Map()
     public cells: Map<number, Cell> = new Map()
     public walls: Map<number, Wall> = new Map()
 
-    public foodSpawnRate: number = 0;
+    // For user
+    public foodSpawnRate = 0;
+    public lightIntensity = 0;
+    public radiation = 0;
+    public viscosity = 0;
+    public density = 0;
+    public gravity = new Vector2();
+    public camera = Camera.createNull();
+
+    // Not for user
+    public maxNutritionGainSpeed = 56;
+    public minCellMass = 80;
+    public maxCellMass = 500;
+    public foodMassLoss = 0.1;
+    public minFoodMass = 0.1;
+
+    // Cell-specific, not for user
+    public flagellocyteFlagellumForceCost = 0.1;
+    public flagellocyteFlagellumForceMax = 10;
 
     private idCounter = 0;
 
@@ -135,11 +147,14 @@ export default class World {
     }
 
     static getDefault() {
-        return new World(0, 0, new Vector2(), 0, 0, 0, 0)
+        return new World(0, 0)
     }
 
     static TEMPORARY_DEBUG = (() => {
-        const world = new World(800, 600, new Vector2(0, 4), 0, 0.2, 0, 0, new Camera(new Vector2(0, 0), 800));
+        const world = new World(800, 600);
+        world.viscosity = 0.2;
+        world.camera = new Camera(new Vector2(0, 0), 800)
+        world.gravity = new Vector2(0, 4);
         for (let i = 0; i < 50; i++) {
             world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         }

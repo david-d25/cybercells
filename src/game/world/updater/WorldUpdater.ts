@@ -4,7 +4,9 @@ import UpdateContext from "@/game/world/updater/UpdateContext";
 import KineticsUpdater from "@/game/world/updater/KineticsUpdater";
 import Updater from "@/game/world/updater/Updater";
 import PositionUpdater from "@/game/world/updater/PositionUpdater";
-import FoodSpawnUpdater from "@/game/world/updater/FoodSpawnUpdater";
+import FoodUpdater from "@/game/world/updater/FoodUpdater";
+import NutritionUpdater from "@/game/world/updater/NutritionUpdater";
+import CellUpdater from "@/game/world/updater/CellUpdater";
 
 export default class WorldUpdater {
     constructor(
@@ -14,9 +16,11 @@ export default class WorldUpdater {
         this.updatePipeline = [
             new ResetContextUpdater(this.world, this.updateContext),
             new KineticsUpdater(this.world, this.updateContext),
+            new FoodUpdater(this.world),
+            new NutritionUpdater(this.world),
+            new CellUpdater(this.world),
             new PositionUpdater(this.world),
-            new FoodSpawnUpdater(this.world),
-            // cell updater
+            // update collision system
         ]
     }
 
@@ -67,10 +71,4 @@ export default class WorldUpdater {
             this.tick(WorldUpdater.SIMULATION_TICK_FIXED_DELTA / 1000 * WorldUpdater.SIMULATION_SPEED_FACTOR);
         this.lastUpdateMillis += WorldUpdater.SIMULATION_TICK_FIXED_DELTA * ticksRequiredOriginal;
     }
-
-    // physics layers:
-    // 1. cell physics
-    // 2. cell nutrition
-    // 3. cell action
-    // 4. food
 }

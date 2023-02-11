@@ -1,7 +1,7 @@
 import Vector2 from "@/geom/Vector2";
 
 export default class Food implements WorldObject {
-    static FOOD_DENSITY = 4
+    static FOOD_DENSITY = 3
 
     id = -1
 

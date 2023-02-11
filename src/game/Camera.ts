@@ -6,5 +6,7 @@ export default class Camera {
         public height: number
     ) {}
 
-    static NULL = new Camera(new Vector2(), 0)
+    static createNull() {
+        return new Camera(new Vector2(), 0);
+    }
 }

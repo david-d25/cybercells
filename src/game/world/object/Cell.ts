@@ -18,12 +18,25 @@ export default class Cell implements WorldObject, HasAabb {
     connections: Map<number, CellConnectionState> = new Map()
     age: number = 0
 
-    public get radius() {
+    get radius() {
         return Math.sqrt(this.mass)
     }
 
     get aabb() {
         return new Aabb(this.center.minus(this.radius), this.center.plus(this.radius))
+    }
+
+    applyImpulse(impulseOrigin: Vector2, impulseDirection: Vector2) {
+        if (impulseDirection.length == 0)
+            return;
+        const originToCenterAngle = impulseOrigin.to(this.center).angle;
+        const directionRelativeAngle = originToCenterAngle - impulseDirection.angle;
+        const impulseOriginDistance = this.center.distance(impulseOrigin);
+        const projectedDistance = Math.sin(directionRelativeAngle) * impulseOriginDistance;
+        const translationImpactCoefficient = 1 / (Math.pow(projectedDistance / this.radius, 2) + 1);
+        const rotationImpactCoefficient = 1 - translationImpactCoefficient;
+        this.speed = this.speed.plus(impulseDirection.times(translationImpactCoefficient));
+        this.angularSpeed -= Math.atan(impulseDirection.length / projectedDistance) * rotationImpactCoefficient;
     }
 }
 
