@@ -1,4 +1,4 @@
-const { sqrt, pow, sin, cos, acos, PI } = Math
+const { sqrt, sin, cos, acos, PI } = Math
 
 export default class Vector2 {
     x: number
@@ -10,7 +10,7 @@ export default class Vector2 {
     }
 
     get length(): number {
-        return sqrt(pow(this.x, 2) + pow(this.y, 2))
+        return sqrt(this.x * this.x + this.y * this.y)
     }
 
     plus(rvalue: Vector2 | number): Vector2 {
@@ -81,7 +81,7 @@ export default class Vector2 {
     }
 
     distance(that: Vector2): number {
-        return sqrt(pow(this.x - that.x, 2) + pow(this.y - that.y, 2))
+        return sqrt((this.x - that.x)**2 + (this.y - that.y)**2)
     }
 
     isNaN() {

@@ -151,7 +151,7 @@ export default class KineticsUpdater implements Updater {
         const directionRelativeAngle = originToCenterAngle - impulseDirection.angle;
         const impulseOriginDistance = cell.center.distance(impulseOrigin);
         const projectedDistance = Math.sin(directionRelativeAngle) * impulseOriginDistance;
-        const translationImpactCoefficient = 1 / (Math.pow(projectedDistance / cell.radius, 2) + 1);
+        const translationImpactCoefficient = 1 / ((projectedDistance / cell.radius)**2 + 1);
         const rotationImpactCoefficient = 1 - translationImpactCoefficient;
         const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
         const newSpeed = oldSpeed.plus(impulseDirection.times(translationImpactCoefficient));

@@ -7,23 +7,38 @@ export default class Geometry {
         lineStart: Vector2,
         lineEnd: Vector2
     ): Vector2[] {
-        const v1 = lineEnd.minus(lineStart);
-        const v2 = lineStart.minus(circleCenter);
-        const b = -2 * v1.dot(v2);
-        const c = 2 * (Math.pow(v1.x, 2) + Math.pow(v1.y, 2));
-        const d = Math.sqrt(
-            Math.pow(b, 2) - 2 * c * (Math.pow(v2.x, 2) + Math.pow(v2.y, 2) - Math.pow(circleRadius, 2))
-        );
-        if (isNaN(d))
-            return [];
+        const x1 = lineStart.x;
+        const y1 = lineStart.y;
+        const x2 = lineEnd.x;
+        const y2 = lineEnd.y;
+        const xc = circleCenter.x;
+        const yc = circleCenter.y;
+        const vx = x2 - x1;
+        const vy = y2 - y1;
+        const sx = x1 - xc;
+        const sy = y1 - yc;
+        const a = vx * vx + vy * vy;
+        const b = 2 * (vx * sx + vy * sy);
+        const c = sx * sx + sy * sy - circleRadius * circleRadius;
+        const d = b * b - 4 * a * c;
 
-        const u1 = (b - d) / c;
-        const u2 = (b + d) / c;
+        if (d < 0) {
+            return [];
+        }
+
+        const t1 = (-b - Math.sqrt(d)) / (2 * a);
+        const t2 = (-b + Math.sqrt(d)) / (2 * a);
+
         const result = [];
-        if (u1 >= 0 && u1 <= 1)
-            result.push(new Vector2(lineStart.x + v1.x * u1, lineStart.y + v1.y * u1));
-        if (u2 >= 0 && u2 <= 1)
-            result.push(new Vector2(lineStart.x + v1.x * u2, lineStart.y + v1.y * u2));
+
+        if (t1 >= 0 && t1 <= 1) {
+            result.push(new Vector2(x1 + vx * t1, y1 + vy * t1));
+        }
+
+        if (t2 >= 0 && t2 <= 1) {
+            result.push(new Vector2(x1 + vx * t2, y1 + vy * t2));
+        }
+
         return result;
     }
 
@@ -33,36 +48,31 @@ export default class Geometry {
         circle2Center: Vector2,
         circle2Radius: number
     ): Vector2[] {
-        const distance = circle1Center.distance(circle2Center)
-        if (distance > circle1Radius + circle2Radius)
+        const x1 = circle1Center.x;
+        const y1 = circle1Center.y;
+        const r1 = circle1Radius;
+        const x2 = circle2Center.x;
+        const y2 = circle2Center.y;
+        const r2 = circle2Radius;
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const d = Math.sqrt(dx * dx + dy * dy);
+
+        if (d > r1 + r2) {
             return [];
+        }
 
-        const a = circle1Center
-            .plus(circle2Center)
-            .times(0.5)
-            .plus(
-                circle2Center
-                    .minus(circle1Center)
-                    .times(
-                        Math.pow(circle1Radius, 2) - Math.pow(circle2Radius, 2)
-                    )
-                    .div(2*Math.pow(distance, 2))
-            );
+        const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
+        const h = Math.sqrt(r1 * r1 - a * a);
+        const x3 = x1 + (dx * a) / d;
+        const y3 = y1 + (dy * a) / d;
+        const xa = x3 + (h * dy) / d;
+        const xb = x3 - (h * dy) / d;
+        const ya = y3 - (h * dx) / d;
+        const yb = y3 + (h * dx) / d;
 
-        const b = new Vector2(
-            circle2Center.y - circle1Center.y,
-            circle1Center.x - circle2Center.x
-        ).times(
-            0.5 * Math.sqrt(
-                2 * (Math.pow(circle1Radius, 2) + Math.pow(circle2Radius, 2)) / Math.pow(distance, 2) -
-                Math.pow(Math.pow(circle1Radius, 2) - Math.pow(circle2Radius, 2), 2) / Math.pow(distance, 4) - 1
-            )
-        );
-
-        if (a.isNaN() || b.isNaN())
-            return [];
-
-        return [a.plus(b), a.minus(b)];
+        return [new Vector2(xa, ya), new Vector2(xb, yb)];
     }
 
     static findLinesIntersection(
@@ -107,7 +117,7 @@ export default class Geometry {
     ): Vector2 {
         const a = line[0];
         const b = line[1];
-        if (a.x == b.x)
+        if (Math.abs(a.x - b.x) < Number.EPSILON)
             return new Vector2(a.x, point.y);
         return a.to(b).times(
             a.to(point).dot(a.to(b)) / (a.to(b)).dot(a.to(b))

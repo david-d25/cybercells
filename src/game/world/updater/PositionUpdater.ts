@@ -13,5 +13,6 @@ export default class PositionUpdater implements Updater {
             cell.speed = cell.speed.minus(cell.speed.times(this.world.viscosity * delta));
             cell.angularSpeed -= cell.angularSpeed * this.world.viscosity * delta;
         });
+        this.world.updateCollisionSystem();
     }
 }

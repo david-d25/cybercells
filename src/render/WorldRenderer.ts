@@ -3,12 +3,12 @@ import { mat4, vec2 } from 'gl-matrix';
 
 import World from "@/game/world/World";
 
-import commonVertexShaderSource from 'raw-loader!@/shaders/common.vert';
-import backgroundFragmentShaderSource from 'raw-loader!@/shaders/background.frag';
-import cellFragmentShaderSource from 'raw-loader!@/shaders/cell.frag';
-import wallFragmentShaderSource from 'raw-loader!@/shaders/wall.frag';
-import foodFragmentShaderSource from 'raw-loader!@/shaders/food.frag';
-import emptyFragmentShaderSource from 'raw-loader!@/shaders/empty.frag';
+import commonVertexShaderSource from 'raw-loader!@/shader/common.vert';
+import backgroundFragmentShaderSource from 'raw-loader!@/shader/background.frag';
+import cellFragmentShaderSource from 'raw-loader!@/shader/cell.frag';
+import wallFragmentShaderSource from 'raw-loader!@/shader/wall.frag';
+import foodFragmentShaderSource from 'raw-loader!@/shader/food.frag';
+import emptyFragmentShaderSource from 'raw-loader!@/shader/empty.frag';
 import Vector2 from "@/geom/Vector2";
 import Cell from "@/game/world/object/Cell";
 import Wall from "@/game/world/object/Wall";
@@ -141,10 +141,12 @@ export default class WorldRenderer {
             gl.uniform1i(gl.getUniformLocation(this.foodShader, 'image'), 0);
 
             const remainingFoodToDraw = Math.min(chunkStart + WorldRenderer.MAX_FOOD_PER_DRAW, this.world!.food.size);
-            for (let i = chunkStart; i < remainingFoodToDraw; i++) {
+            let chunkLocalIndex = 0;
+            for (let globalIndex = chunkStart; globalIndex < remainingFoodToDraw; globalIndex++) {
                 const food = foodIterator.next().value;
-                gl.uniform2f(gl.getUniformLocation(this.foodShader, `food[${i}].center`), food.center.x, food.center.y);
-                gl.uniform1f(gl.getUniformLocation(this.foodShader, `food[${i}].radius`), food.radius);
+                gl.uniform2f(gl.getUniformLocation(this.foodShader, `food[${chunkLocalIndex}].center`), food.center.x, food.center.y);
+                gl.uniform1f(gl.getUniformLocation(this.foodShader, `food[${chunkLocalIndex}].radius`), food.radius);
+                chunkLocalIndex++;
             }
             gl.uniform1i(gl.getUniformLocation(this.foodShader, `foodNumber`), remainingFoodToDraw);
 
@@ -210,8 +212,8 @@ export default class WorldRenderer {
                 [aabbMinX, aabbMinY],
                 [aabbMaxX, aabbMaxY]
             ] = [
-                this.project([aabb.min.x, aabb.min.y]),
-                this.project([aabb.max.x, aabb.max.y])
+                this.project([aabb[0], aabb[1]]),
+                this.project([aabb[2], aabb[3]])
             ];
             if (aabbMaxX < 0 || aabbMaxY < 0
                 || aabbMinX > gl.drawingBufferWidth

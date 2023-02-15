@@ -1,30 +1,20 @@
-import Vector2 from "@/geom/Vector2";
-
 /**
  * Represents an Axis-Aligned Bounding Box.
  */
-export default class Aabb {
-    min: Vector2
-    max: Vector2
-
-    /**
-     * @param min upper-left corner of the box
-     * @param max lower-right corner of the box
-     */
-    constructor(min: Vector2, max: Vector2) {
-        this.min = min
-        this.max = max
-    }
-
-    get center(): Vector2 {
-        return new Vector2((this.min.x + this.max.x)/2, (this.min.y + this.max.y)/2)
-    }
-
-    get width(): number {
-        return this.max.x - this.min.x
-    }
-
-    get height(): number {
-        return this.max.y - this.min.y
-    }
-}
+type Aabb = [number, number, number, number];
+export default Aabb;
+// export default class Aabb {
+//     constructor(public minX: number, public minY: number, public maxX: number, public maxY: number) {}
+//
+//     get center(): Vector2 {
+//         return new Vector2((this.minX + this.maxX)/2, (this.minY + this.maxY)/2)
+//     }
+//
+//     get width(): number {
+//         return this.maxX - this.minX
+//     }
+//
+//     get height(): number {
+//         return this.maxY - this.minY
+//     }
+// }

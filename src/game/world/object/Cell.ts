@@ -22,8 +22,14 @@ export default class Cell implements WorldObject, HasAabb {
         return Math.sqrt(this.mass)
     }
 
-    get aabb() {
-        return new Aabb(this.center.minus(this.radius), this.center.plus(this.radius))
+    get aabb(): Aabb {
+        const radius  = this.radius;
+        return [
+            this.center.x - radius,
+            this.center.y - radius,
+            this.center.x + radius,
+            this.center.y + radius
+        ];
     }
 
     applyImpulse(impulseOrigin: Vector2, impulseDirection: Vector2) {

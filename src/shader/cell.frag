@@ -5,6 +5,7 @@ precision highp sampler2D;
 
 const float POSITIVE_INFINITY = 1.0 / 0.0;
 const float NAN = 0.0 / 0.0;
+const float EPSILON = 0.0000001;
 
 const float CELL_BORDER_WIDTH = 2.0;
 const int MAX_OBSTACLES = 32;
@@ -45,8 +46,8 @@ vec4 previousLayerColor(float x, float y) {
 vec2 projectPointOntoLine(vec2 p, vec2 lineStart, vec2 lineEnd) {
     vec2 a = lineStart;
     vec2 b = lineEnd;
-    if (a == b)
-        return a;
+    if (abs(a.x - b.x) < EPSILON)
+        return vec2(a.x, p.y);
     return (b - a) * dot(p - a, b - a) / dot(b - a, b - a) + a;
 }
 

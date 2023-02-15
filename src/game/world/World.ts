@@ -5,6 +5,8 @@ import Wall from "@/game/world/object/Wall";
 import Genome from "@/game/Genome";
 import Camera from "@/game/Camera";
 import Geometry from "@/geom/Geometry";
+import CollisionSystem from "@/game/world/CollisionSystem";
+import Aabb from "@/geom/Aabb";
 
 export default class World {
     constructor(
@@ -37,6 +39,9 @@ export default class World {
     public flagellocyteFlagellumForceMax = 10;
 
     private idCounter = 0;
+    private cellCollisionSystem: CollisionSystem<Cell> = new CollisionSystem();
+    private foodCollisionSystem: CollisionSystem<Food> = new CollisionSystem();
+    private wallCollisionSystem: CollisionSystem<Wall> = new CollisionSystem();
 
     public newId() {
         return this.idCounter++;
@@ -66,15 +71,21 @@ export default class World {
         }
     }
 
-    public getLightIntensityAtPoint(point: Vector2) {
+    getLightIntensityAtPoint(point: Vector2) {
         // TODO in future
     }
 
-    public getRadiationIntensityAtPoint(point: Vector2) {
+    getRadiationIntensityAtPoint(point: Vector2) {
         // TODO in future
     }
 
-    // TODO use K-d tree (maybe with a separate managing object)
+    updateCollisionSystem() {
+        this.cellCollisionSystem.buildSystem(this, this.cells.values());
+        this.foodCollisionSystem.buildSystem(this, this.food.values());
+        this.wallCollisionSystem.buildSystem(this, this.walls.values());
+    }
+
+    // TODO this is slow
     // TODO return intersection points
     rayCast(a: Vector2, b: Vector2): WorldObject[] {
         const result: WorldObject[] = [];
@@ -97,22 +108,27 @@ export default class World {
         return result;
     }
 
-    // TODO use K-d Tree (maybe with a separate managing object)
     // TODO return intersection points
     circleCast(center: Vector2, radius: number): WorldObject[] {
         const result: WorldObject[] = [];
+        const aabb: Aabb = [
+            center.x - radius,
+            center.y - radius,
+            center.x + radius,
+            center.y + radius
+        ];
 
-        for (const it of this.walls.values()) {
+        for (const it of this.wallCollisionSystem.findPotentialCollisions(aabb)) {
             if (Geometry.findLineAndCircleIntersections(center, radius, it.a, it.b).length != 0)
                 result.push(it);
         }
 
-        for (const it of this.cells.values()) {
+        for (const it of this.cellCollisionSystem.findPotentialCollisions(aabb)) {
             if (Geometry.findCirclesIntersections(center, radius, it.center, it.radius).length != 0)
                 result.push(it);
         }
 
-        for (const it of this.food.values()) {
+        for (const it of this.foodCollisionSystem.findPotentialCollisions(aabb)) {
             if (Geometry.findCirclesIntersections(center, radius, it.center, it.radius).length != 0)
                 result.push(it);
         }
@@ -120,12 +136,18 @@ export default class World {
         return result;
     }
 
-    // TODO use K-d Tree (maybe with a separate managing object)
+    // TODO return intersection points
     pointCast(point: Vector2, threshold: number): WorldObject[] {
         const result: WorldObject[] = [];
         const error = 10e-6;
+        const aabb: Aabb = [
+            point.x - threshold,
+            point.y - threshold,
+            point.x + threshold,
+            point.y + threshold
+        ];
 
-        for (const it of this.walls.values()) {
+        for (const it of this.wallCollisionSystem.findPotentialCollisions(aabb)) {
             const projected = Geometry.projectPointOntoLine(point, [it.a, it.b])
             if (point.distance(projected) <= threshold) {
                 if (projected.distance(it.a) + projected.distance(it.b) <= it.a.distance(it.b) + threshold * 2 + error)
@@ -133,12 +155,12 @@ export default class World {
             }
         }
 
-        for (const it of this.cells.values()) {
+        for (const it of this.cellCollisionSystem.findPotentialCollisions(aabb)) {
             if (it.center.distance(point) <= it.radius + threshold)
                 result.push(it);
         }
 
-        for (const it of this.food.values()) {
+        for (const it of this.foodCollisionSystem.findPotentialCollisions(aabb)) {
             if (it.center.distance(point) <= it.radius + threshold)
                 result.push(it);
         }
@@ -165,4 +187,11 @@ export default class World {
         world.add(new Wall(new Vector2(world.width, 0), new Vector2(0, 0)));
         return world;
     })()
+}
+
+export class CollisionResult {
+    constructor(
+        public object: WorldObject,
+        public points: Vector2[]
+    ) {}
 }
