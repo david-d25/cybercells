@@ -4,7 +4,6 @@ import Aabb from "@/geom/Aabb";
 import World from "@/game/world/World";
 
 export default class CollisionSystem<T extends HasAabb> {
-    private static MAX_DEPTH = 8;
 
     private tree: KdTree<T> = new KdTree();
 
@@ -14,7 +13,7 @@ export default class CollisionSystem<T extends HasAabb> {
             objectsSet.add(object);
 
         this.tree.root = new Node(Axis.X, [0, 0, world.width, world.height], objectsSet);
-        this.buildNodes(this.tree.root);
+        this.buildNodes(this.tree.root, Math.floor(Math.sqrt(objectsSet.size)));
     }
 
     add(object: T) {
@@ -57,7 +56,7 @@ export default class CollisionSystem<T extends HasAabb> {
         return result;
     }
 
-    private buildNodes(node: Node<T>, depthRemaining: number = CollisionSystem.MAX_DEPTH) {
+    private buildNodes(node: Node<T>, depthRemaining: number) {
         let middle = 0;
         let count = 0;
         const isAxisX = node.axis == Axis.X

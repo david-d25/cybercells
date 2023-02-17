@@ -9,7 +9,7 @@ export class Node<T extends HasAabb> {
     constructor(
         public axis: Axis,
         public aabb: Aabb,
-        public objects: Iterable<T> = new Set()
+        public objects: Set<T> = new Set()
     ) {}
 
     childA: Node<T> | null = null

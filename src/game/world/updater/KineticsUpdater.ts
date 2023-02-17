@@ -62,12 +62,15 @@ export default class KineticsUpdater implements Updater {
         });
     }
 
+    // TODO use less Vector2 functions to improve performance
     private processGravity(cell: Cell, delta: number) {
         let speed = this.cellsSpeedBuffer.get(cell.id)!;
         speed = speed.plus(this.world.gravity.times(delta));
         this.cellsSpeedBuffer.set(cell.id, speed);
     }
 
+    // TODO use less Vector2 functions to improve performance
+    // TODO this function is based in incorrect math
     private processCellWallCollision(cell: Cell, wall: Wall, delta: number) {
         const intersections = Geometry.findLineAndCircleIntersections(cell.center, cell.radius, wall.a, wall.b);
         if (intersections.length !== 0) {
@@ -81,6 +84,7 @@ export default class KineticsUpdater implements Updater {
         }
     }
 
+    // TODO use less Vector2 functions to improve performance
     private processCellsCollision(cell: Cell, otherCell: Cell, delta: number) {
         if (cell.id == otherCell.id)
             return;
@@ -114,6 +118,7 @@ export default class KineticsUpdater implements Updater {
         }
     }
 
+    // TODO use less Vector2 functions to improve performance
     private processCellConnection(cell: Cell, connection: CellConnectionState, delta: number) {
         const partner = this.world.cells.get(connection.partnerId);
         if (!partner)
@@ -144,6 +149,7 @@ export default class KineticsUpdater implements Updater {
         }
     }
 
+    // TODO use less Vector2 functions to improve performance
     private applyImpulse(cell: Cell, impulseOrigin: Vector2, impulseDirection: Vector2) {
         if (impulseDirection.length == 0)
             return;

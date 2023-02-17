@@ -35,23 +35,23 @@
 </template>
 
 <script setup lang="ts">
-import {inject, Ref} from "vue";
+import {inject, ShallowReactive} from "vue";
 
 import HudButton from "@/component/HudButton.vue";
 import WorldUpdater from "@/game/world/updater/WorldUpdater";
 
-const updater = inject('worldUpdater') as Ref<WorldUpdater>;
+const updater = inject('worldUpdater') as ShallowReactive<WorldUpdater>;
 
 function onPausePlayButtonClick() {
-  if (updater.value.simulationActive)
-    updater.value.pauseSimulation();
+  if (updater.simulationActive)
+    updater.pauseSimulation();
   else
-    updater.value.startSimulation();
+    updater.startSimulation();
 }
 
 function onSpeedButtonClick(speed: number) {
-  updater.value.simulationSpeed = speed;
-  updater.value.startSimulation();
+  updater.simulationSpeed = speed;
+  updater.startSimulation();
 }
 </script>
 

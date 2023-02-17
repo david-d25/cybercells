@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import {provide, ref, shallowRef} from "vue";
+import {provide, ref, shallowReactive} from "vue";
 
 import WorldViewer from "@/component/WorldViewer.vue";
 import ControlsPanel from "@/component/HudPanel.vue";
@@ -33,7 +33,7 @@ genomeLibrary.entries.add(new GenomeLibraryEntry("aaaaaaaaa", Genome.newSampleGe
 genomeLibrary.entries.add(new GenomeLibraryEntry("aboba", Genome.newSampleGenome()));
 
 provide('world', world);
-provide('worldUpdater', shallowRef(worldUpdater));
+provide('worldUpdater', shallowReactive(worldUpdater));
 provide('genomeLibrary', ref(genomeLibrary));
 provide('appPreferences', ref(appPreferences));
 provide('toolsManager', ref(toolsManager));

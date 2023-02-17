@@ -25,7 +25,7 @@ void main() {
 
 //    float value = mod(floor(x/CHECKER_SIZE) + floor(y/CHECKER_SIZE), 2.0) == 0.0 ? 0.4 : 0.2;
 //    color = vec4(value, value, value, 1);
-//    color = vec4(0.6, 0.85, 0.9, 1);
+//    color = vec4(0.7, 0.88, 0.9, 1);
     color = vec4(0.2, 0.2, 0.2, 1);
     color = mix(color, lightFunction(x, y), lightIntensity);
 
