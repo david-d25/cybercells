@@ -55,7 +55,10 @@ function stopHandleDragging() {
 <style lang="scss">
 .c-tabbed-panel {
   .tabbed-panel {
+    display: flex;
+    max-height: 100%;
     pointer-events: all;
+    flex-direction: column;
   }
 
   .tabs {
@@ -70,8 +73,11 @@ function stopHandleDragging() {
   }
 
   .body {
-    margin: 15px;
+    flex: 1;
+    overflow: auto;
     position: relative;
+    mask-image: linear-gradient(to bottom, transparent 0, black 15px, black calc(100% - 15px), transparent 100%);
+    padding: 15px;
   }
 
   .resize-handle {
@@ -82,7 +88,7 @@ function stopHandleDragging() {
     cursor: ew-resize;
     margin: auto;
     bottom: 0;
-    left: -5px;
+    left: 10px;
     top: 0;
   }
 }
