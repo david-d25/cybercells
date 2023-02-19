@@ -85,6 +85,7 @@ export default class KineticsUpdater implements Updater {
     }
 
     // TODO use less Vector2 functions to improve performance
+    // TODO maybe this can be optimized to not use circles intersection points
     private processCellsCollision(cell: Cell, otherCell: Cell, delta: number) {
         if (cell.id == otherCell.id)
             return;

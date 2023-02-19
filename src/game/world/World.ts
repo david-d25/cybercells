@@ -43,11 +43,11 @@ export default class World {
     private foodCollisionSystem: CollisionSystem<Food> = new CollisionSystem();
     private wallCollisionSystem: CollisionSystem<Wall> = new CollisionSystem();
 
-    public newId() {
+    newId() {
         return this.idCounter++;
     }
 
-    public add(object: WorldObject) {
+    add(object: WorldObject) {
         if (object.id == -1)
             object.id = this.newId();
 
@@ -59,7 +59,7 @@ export default class World {
             this.walls.set(object.id, object);
     }
 
-    public remove(object: WorldObject) {
+    remove(object: WorldObject) {
         this.cells.delete(object.id);
         this.food.delete(object.id);
         this.walls.delete(object.id);
@@ -166,6 +166,12 @@ export default class World {
         }
 
         return result;
+    }
+
+    clear() {
+        this.cells.forEach(this.remove.bind(this));
+        this.food.forEach(this.remove.bind(this));
+        this.walls.forEach(this.remove.bind(this));
     }
 
     static getDefault() {

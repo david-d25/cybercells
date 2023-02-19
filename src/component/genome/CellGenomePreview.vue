@@ -6,48 +6,51 @@
 
 <script setup lang="ts">
 import Genome from "@/game/Genome";
-import WorldRenderer from "@/render/WorldRenderer";
-import {onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
+import RenderingService from "@/render/RenderingService";
+import {inject, onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
 import World from "@/game/world/World";
 import Vector2 from "@/geom/Vector2";
 import Camera from "@/game/Camera";
 import Cell from "@/game/world/object/Cell";
+import RenderingContext from "@/render/RenderingContext";
 
 const props = defineProps<{
   genome: Genome | null
 }>();
 
 const canvas = ref() as Ref<HTMLCanvasElement>;
+let dummyWorld: World = World.getDefault();
 let canvasSizeObserver: ResizeObserver
-let renderer: WorldRenderer
+let renderingService = inject('renderingService') as RenderingService
+let renderingContext: RenderingContext
 
 onMounted(() => {
-  renderer = WorldRenderer.init(canvas.value)
-  renderer.config.layers.background = false
-  canvasSizeObserver = new ResizeObserver(onCanvasResize)
-  canvasSizeObserver.observe(canvas.value)
-  updateRendererDummyWorld()
-  renderer.render()
+  renderingContext = renderingService.newContext(canvas.value);
+  renderingContext.config.layers.background = false;
+  canvasSizeObserver = new ResizeObserver(onCanvasResize);
+  canvasSizeObserver.observe(canvas.value);
+  updateRendererDummyWorld();
+  renderingContext.bindWorld(dummyWorld);
+  renderingContext.render()
 })
 
 onBeforeUnmount(() => {
   canvasSizeObserver.disconnect();
-  renderer.destroy();
+  renderingContext.destroy();
 })
 
 watch(props, () => {
   updateRendererDummyWorld()
-  renderer.render()
+  renderingContext.render();
 })
 
 function updateRendererDummyWorld() {
-  const dummyWorld = World.getDefault()
+  dummyWorld.clear();
   if (props.genome) {
     const dummyCell = new Cell(new Vector2(), new Vector2(), 300, Math.PI/4, 0, props.genome)
-    dummyWorld.cells.set(0, dummyCell)
+    dummyWorld.add(dummyCell)
     dummyWorld.camera = new Camera(new Vector2(), dummyCell.radius * 3)
   }
-  renderer.world = dummyWorld
 }
 
 function onCanvasResize() {
@@ -55,7 +58,7 @@ function onCanvasResize() {
   const { width, height } = canvas.value.getBoundingClientRect();
   canvas.value.width = Math.round(width * dpr);
   canvas.value.height = Math.round(height * dpr);
-  renderer.render()
+  renderingContext.render();
 }
 </script>
 

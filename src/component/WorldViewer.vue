@@ -17,8 +17,9 @@
 <script setup lang="ts">
 import {ref, inject, onMounted, onBeforeUnmount} from 'vue';
 import World from "@/game/world/World";
-import WorldRenderer from "@/render/WorldRenderer";
+import RenderingService from "@/render/RenderingService";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
+import RenderingContext from "@/render/RenderingContext";
 
 const SCROLL_SENSITIVITY = 0.005
 
@@ -27,10 +28,11 @@ const containerRef = ref<HTMLDivElement>()
 
 const emit = defineEmits<{(e: string, payload: WorldMouseEvent): void}>()
 
-let world: World = inject('world')!
+let world = inject('world') as World
 let canvas: HTMLCanvasElement
 let container: HTMLDivElement
-let renderer: WorldRenderer
+let renderingService = inject('renderingService') as RenderingService
+let renderingContext: RenderingContext
 
 let canvasSizeObserver: ResizeObserver;
 let animationFrameRequest: number;
@@ -44,7 +46,8 @@ const dragging = {
 onMounted(() => {
   canvas = canvasRef.value!
   container = containerRef.value!
-  renderer = WorldRenderer.init(canvas, world);
+  renderingContext = renderingService.newContext(canvas);
+  renderingContext.bindWorld(world);
   canvasSizeObserver = new ResizeObserver(onCanvasResize);
   canvasSizeObserver.observe(canvas);
   renderingRoutine();
@@ -53,7 +56,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   canvasSizeObserver.disconnect();
   window.cancelAnimationFrame(animationFrameRequest);
-  renderer.destroy()
+  renderingContext.destroy()
 });
 
 function onWheel(event: WheelEvent) {
@@ -78,7 +81,7 @@ function onTouchEvent(event: TouchEvent) {
       const { clientX: x, clientY: y } = event.touches[0]
       const dps = window.devicePixelRatio
       const [ screenX, screenY ] = [x * dps, y * dps]
-      let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
+      let [ worldX, worldY ] = renderingContext.unproject([screenX, screenY])
       const worldEvent = new WorldMouseEvent(world, `world-${mouseEventType}`, screenX, screenY, worldX, worldY)
       handleDraggingEvent(worldEvent)
       emit(worldEvent.type, worldEvent)
@@ -91,7 +94,7 @@ function onMouseEvent(event: MouseEvent) {
     return;
   const dps = window.devicePixelRatio
   const [ screenX, screenY ] = [event.x * dps, event.y * dps]
-  let [ worldX, worldY ] = renderer.unproject([screenX, screenY])
+  let [ worldX, worldY ] = renderingContext.unproject([screenX, screenY])
 
   const worldEvent = new WorldMouseEvent(world, `world-${event.type}`, screenX, screenY, worldX, worldY)
   handleDraggingEvent(worldEvent)
@@ -110,7 +113,7 @@ function handleDraggingEvent(event: WorldMouseEvent) {
     const [ prevX, prevY ] = dragging.lastMouseWorldPoint;
     world.camera.center.x += prevX - event.worldX;
     world.camera.center.y += prevY - event.worldY;
-    [ event.worldX, event.worldY ] = renderer.unproject([event.screenX, event.screenY]);
+    [ event.worldX, event.worldY ] = renderingContext.unproject([event.screenX, event.screenY]);
     dragging.lastMouseWorldPoint = [ event.worldX, event.worldY ];
   }
 
@@ -119,7 +122,7 @@ function handleDraggingEvent(event: WorldMouseEvent) {
 }
 
 function renderingRoutine() {
-  renderer.render()
+  renderingContext.render();
   animationFrameRequest = window.requestAnimationFrame(renderingRoutine)
 }
 
@@ -128,7 +131,7 @@ function onCanvasResize() {
   const { width, height } = container.getBoundingClientRect();
   canvas.width = Math.round(width * dpr);
   canvas.height = Math.round(height * dpr);
-  renderer.render()
+  renderingContext.render();
 }
 </script>
 
