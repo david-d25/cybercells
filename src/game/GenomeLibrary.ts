@@ -11,6 +11,14 @@ export default class GenomeLibrary {
         })
         return result
     }
+
+    lookupByGenome(genome: Genome): GenomeLibraryEntry | null {
+        for (const entry of this.entries) {
+            if (entry.genome == genome)
+                return entry;
+        }
+        return null;
+    }
 }
 
 export class GenomeLibraryEntry {
