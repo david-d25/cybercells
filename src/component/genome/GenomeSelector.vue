@@ -36,14 +36,16 @@
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import GenomeLibrary, {GenomeLibraryEntry} from "@/game/GenomeLibrary";
-import InputLabel from "@/component/input/InputLabel.vue";
 import CellGenomePreview from "@/component/genome/CellGenomePreview.vue";
 
-const emit = defineEmits(['update:modelValue'])
-const props = defineProps<{
+const emit = defineEmits(['update:modelValue']);
+const props = withDefaults(defineProps<{
   library: GenomeLibrary,
+  disabled?: boolean,
   modelValue?: GenomeLibraryEntry
-}>()
+}>(), {
+  disabled: false
+});
 
 const nameInput = ref(props.modelValue ? props.modelValue.name : "")
 const dropdownOpened = ref(false)

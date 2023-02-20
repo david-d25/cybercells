@@ -183,7 +183,7 @@ export default class World {
         world.viscosity = 0.2;
         world.camera = new Camera(new Vector2(0, 0), 800)
         world.gravity = new Vector2(0, 4);
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 10; i++) {
             world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         }
         world.camera.center = new Vector2(400, 300);
