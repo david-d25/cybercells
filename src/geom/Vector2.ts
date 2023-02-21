@@ -97,7 +97,7 @@ export default class Vector2 {
     }
 
     get unit(): Vector2 {
-        return this.length != 0 ? new Vector2(this.x/this.length, this.y/this.length) : new Vector2()
+        return this.length != 0 ? new Vector2(this.x/this.length, this.y/this.length) : new Vector2(1, 0)
     }
 
     static isNaN(vector: Vector2): boolean {

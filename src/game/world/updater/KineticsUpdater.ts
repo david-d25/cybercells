@@ -23,7 +23,7 @@ export default class KineticsUpdater implements Updater {
         for (const cell of this.world.cells.values()) {
             this.processGravity(cell, delta);
 
-            this.world.circleCast(cell.center, cell.radius).forEach(wo => {
+            this.world.pointCast(cell.center, cell.radius).forEach(wo => {
                 if (wo instanceof Wall)
                     this.processCellWallCollision(cell, wo, delta);
                 else if (wo instanceof Cell)
@@ -77,7 +77,7 @@ export default class KineticsUpdater implements Updater {
             const projection = Geometry.projectPointOntoLine(cell.center, [wall.a, wall.b]);
             const oppositeForce = projection.to(cell.center).unit.times(cell.radius - projection.distance(cell.center));
             const depth = Geometry.clamp(1 - cell.center.distance(projection) / cell.radius, 0, 1);
-            const hardnessCoefficient = Math.pow(cell.genome.hardness * depth + 1, cell.genome.hardness + 1);
+            const hardnessCoefficient = (cell.genome.hardness * depth + 1) ** (cell.genome.hardness + 1);
             const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
             const newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient * delta));
             this.cellsSpeedBuffer.set(cell.id, newSpeed);
@@ -85,36 +85,28 @@ export default class KineticsUpdater implements Updater {
     }
 
     // TODO use less Vector2 functions to improve performance
-    // TODO maybe this can be optimized to not use circles intersection points
     private processCellsCollision(cell: Cell, otherCell: Cell, delta: number) {
         if (cell.id == otherCell.id)
             return;
 
-        if (cell.center.distance(otherCell.center) <= cell.radius + otherCell.radius) {
-            const intersections = Geometry.findCirclesIntersections(
-                cell.center, cell.radius, otherCell.center, otherCell.radius
-            );
+        const toOtherCellCenter = cell.center.to(otherCell.center)
+        const centersDistance = toOtherCellCenter.length
+        const radiusSum = cell.radius + otherCell.radius
+        if (centersDistance <= cell.radius + otherCell.radius) {
+            const toOtherCellDirection = toOtherCellCenter.unit
+            const toNearestOtherCellSurfacePoint = toOtherCellCenter.minus(toOtherCellDirection.times(otherCell.radius));
+            const toOtherCellSurfacePoint = toOtherCellDirection.times(cell.radius);
+            const rawForce = toOtherCellSurfacePoint.minus(toNearestOtherCellSurfacePoint);
+            const depth = (radiusSum - centersDistance)/radiusSum;
+            const hardnessAvg = (cell.genome.hardness + otherCell.genome.hardness)/2;
+            const hardnessCoefficient = Geometry.clamp(2 * hardnessAvg * (depth - 0.5) + 1, 0, 1);
+            const thisCellForce = rawForce
+                .times(-otherCell.mass)
+                .times(hardnessCoefficient)
+                .div(cell.mass + otherCell.mass);
 
-            const pivot = intersections.length != 0
-                ? intersections[0].plus(intersections[1]).div(2)
-                : cell.center.plus(otherCell.center).div(2);
-
-            const depth = Geometry.clamp(1 - cell.center.distance(pivot) / cell.radius, 0, 1);
-            const massSum = cell.mass + otherCell.mass;
-            const thisMassCoefficient = cell.mass / massSum;
-            const oppositeForce = pivot.to(cell.center).unit.times(cell.radius - pivot.distance(cell.center));
-            const hardnessCoefficient = Math.pow(cell.genome.hardness * depth + 1, cell.genome.hardness + 1);
             const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
-            const newSpeed = oldSpeed.plus(
-                oppositeForce
-                    .times(hardnessCoefficient)
-                    .plus(
-                        otherCell.speed
-                            .times(thisMassCoefficient)
-                            .minus(cell.speed.times(1 - thisMassCoefficient))
-                            .times(cell.genome.hardness)
-                    ).times(delta)
-            );
+            const newSpeed = oldSpeed.plus(thisCellForce.times(delta));
             this.cellsSpeedBuffer.set(cell.id, newSpeed);
         }
     }

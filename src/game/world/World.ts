@@ -180,9 +180,10 @@ export default class World {
 
     static TEMPORARY_DEBUG = (() => {
         const world = new World(800, 600);
-        world.viscosity = 0.2;
+        world.viscosity = 0.1;
+        world.foodSpawnRate = 10;
         world.camera = new Camera(new Vector2(0, 0), 800)
-        world.gravity = new Vector2(0, 4);
+        world.gravity = new Vector2(0, 0);
         for (let i = 0; i < 10; i++) {
             world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         }
