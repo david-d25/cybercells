@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import {provide, ref, shallowReactive} from "vue";
+import {onBeforeUnmount, provide, ref, shallowReactive} from "vue";
 
 import WorldViewer from "@/component/WorldViewer.vue";
 import ControlsPanel from "@/component/HudPanel.vue";
@@ -45,6 +45,8 @@ function onWorldViewerEvent(event: any) {
   if (event instanceof WorldMouseEvent)
     toolsManager.dispatchEvent(event);
 }
+
+onBeforeUnmount(() => renderingService.destroy());
 </script>
 
 <style lang="scss">

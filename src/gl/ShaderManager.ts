@@ -45,12 +45,12 @@ export default class ShaderManager {
     }
 
     newArrayBuffer(data: number[]): WebGLBuffer {
-        const buffer = this.gl.createBuffer()
+        const buffer = this.gl.createBuffer();
         if (buffer == null)
-            throw new Error("Could not create buffer")
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer)
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW)
-        return buffer
+            throw new Error("Could not create buffer");
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+        return buffer;
     }
 
     destroy() {

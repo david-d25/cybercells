@@ -4,7 +4,8 @@ import commonVertexShaderSource from 'raw-loader!@/shader/common.vert';
 import backgroundFragmentShaderSource from 'raw-loader!@/shader/background.frag';
 import cellFragmentShaderSource from 'raw-loader!@/shader/cell.frag';
 import wallFragmentShaderSource from 'raw-loader!@/shader/wall.frag';
-import foodFragmentShaderSource from 'raw-loader!@/shader/food.frag';
+import foodVertexShaderSource from 'raw-loader!@/shader/food/food.vert';
+import foodFragmentShaderSource from 'raw-loader!@/shader/food/food.frag';
 import emptyFragmentShaderSource from 'raw-loader!@/shader/empty.frag';
 import Vector2 from "@/geom/Vector2";
 import Cell from "@/game/world/object/Cell";
@@ -14,12 +15,9 @@ import ColorUtil from "@/util/ColorUtil";
 import RenderingContext from "@/render/RenderingContext";
 
 export default class RenderingService {
-    private static readonly MAX_FOOD_PER_DRAW = 256;
-
     private readonly startTime = Date.now()
 
     private readonly mainMesh: WebGLBuffer
-    private readonly drawBufferTextureUv: WebGLBuffer
 
     private readonly shaderManager: ShaderManager
     private readonly shaders: {
@@ -33,14 +31,15 @@ export default class RenderingService {
     constructor() {
         this.shaderManager = ShaderManager.init(document.createElement("canvas"));
         this.mainMesh = this.createMainMesh();
-        this.drawBufferTextureUv = this.createDrawBufferTextureUv();
         this.shaders = {
             background: this.shaderManager.newShader(commonVertexShaderSource, backgroundFragmentShaderSource),
             cell: this.shaderManager.newShader(commonVertexShaderSource, cellFragmentShaderSource),
             wall: this.shaderManager.newShader(commonVertexShaderSource, wallFragmentShaderSource),
-            food: this.shaderManager.newShader(commonVertexShaderSource, foodFragmentShaderSource),
+            food: this.shaderManager.newShader(foodVertexShaderSource, foodFragmentShaderSource),
             empty: this.shaderManager.newShader(commonVertexShaderSource, emptyFragmentShaderSource)
         }
+        this.shaderManager.gl.enable(this.shaderManager.gl.DEPTH_TEST);
+        this.shaderManager.gl.depthFunc(this.shaderManager.gl.ALWAYS);
     }
 
     newContext(canvas: HTMLCanvasElement): RenderingContext {
@@ -59,8 +58,9 @@ export default class RenderingService {
         this.shaderManager.gl.canvas.height = targetSize.y;
 
         context.setDrawToBufferTexture();
-        context.swapBuffers();
 
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -84,18 +84,23 @@ export default class RenderingService {
     private renderBufferToCanvas(context: RenderingContext) {
         const gl = this.shaderManager.gl;
         gl.useProgram(this.shaders.empty);
+        context.updateSourceBufferTexture();
 
-        this.setupVertexShader(this.shaders.empty);
+        const vertexAttributeLoc = gl.getAttribLocation(this.shaders.empty, 'vertexPosition')
+        gl.enableVertexAttribArray(vertexAttributeLoc)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
+        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, context.framebuffer);
         gl.bindTexture(gl.TEXTURE_2D, context.getSourceBufferTexture());
         gl.uniform1i(gl.getUniformLocation(this.shaders.empty, 'image'), 0);
 
-        // this.shaderManager.gl.canvas.width = 500;
-        // this.shaderManager.gl.canvas.height = 500;
-
         this.setDrawToCanvas();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        gl.disableVertexAttribArray(vertexAttributeLoc);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
         context.drawFromSource(this.shaderManager.gl.canvas);
     }
@@ -104,13 +109,76 @@ export default class RenderingService {
         if (!context.world)
             return;
 
+        // TODO do not render food that is beyond screen
+        // TODO do not recreate buffers
+
+        const world = context.world;
         const gl = this.shaderManager.gl;
+
+        if (world.food.size == 0)
+            return;
+
+        const centers: number[] = [];
+        const radiuses: number[] = [];
+        const vertexes: number[] = [];
+
+        let instancesCount = 0;
+        world.food.forEach(food => {
+            const [x, y] = [food.center.x, food.center.y];
+            const radius = food.radius;
+            centers.push(x, y, x, y, x, y, x, y, x, y, x, y);
+            radiuses.push(radius, radius, radius, radius, radius, radius);
+            vertexes.push(
+                x - radius, y - radius,
+                x + radius, y - radius,
+                x + radius, y + radius,
+                x - radius, y + radius,
+                x - radius, y - radius,
+                x + radius, y + radius
+            );
+            instancesCount++;
+        })
+
         gl.useProgram(this.shaders.food);
+        context.updateSourceBufferTexture();
 
-        this.setupVertexShader(this.shaders.food);
+        const vertexesBuffer = gl.createBuffer();
+        const centersBuffer = gl.createBuffer();
+        const radiusBuffer = gl.createBuffer();
 
-        const viewMatrix = context.buildViewTransform();
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.shaders.food, 'viewMatrix'), false, viewMatrix);
+        const vertexPositionLoc = gl.getAttribLocation(this.shaders.food, 'vertexPosition');
+        const foodCenterLoc = gl.getAttribLocation(this.shaders.food, 'instanceFoodCenter');
+        const foodRadiusLoc = gl.getAttribLocation(this.shaders.food, 'instanceFoodRadius');
+
+        gl.enableVertexAttribArray(vertexPositionLoc);
+        gl.enableVertexAttribArray(foodCenterLoc);
+        gl.enableVertexAttribArray(foodRadiusLoc);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexes), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(vertexPositionLoc, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, centersBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(centers), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(foodCenterLoc, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, radiusBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(radiuses), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(foodRadiusLoc, 1, gl.FLOAT, false, 0, 0);
+
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.food, 'vertexViewTransform'),
+            false,
+            context.buildVertexViewTransform());
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.food, 'fragmentViewTransform'),
+            false,
+            context.buildFragmentViewTransform());
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.food, 'cameraTransform'),
+            false,
+            context.buildCameraTransform()
+        );
 
         const bufferTexturesSize = context.getBufferTexturesSize();
         gl.uniform2f(
@@ -119,40 +187,44 @@ export default class RenderingService {
             bufferTexturesSize.y
         );
 
-        const foodIterator = context.world!.food.values();
-        for (let chunkStart = 0; chunkStart < context.world.food.size; chunkStart += RenderingService.MAX_FOOD_PER_DRAW) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, context.framebuffer);
-            gl.bindTexture(gl.TEXTURE_2D, context.getSourceBufferTexture());
-            gl.uniform1i(gl.getUniformLocation(this.shaders.food, 'image'), 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, context.framebuffer);
+        gl.bindTexture(gl.TEXTURE_2D, context.getSourceBufferTexture());
+        gl.uniform1i(gl.getUniformLocation(this.shaders.food, 'image'), 0);
 
-            const remainingFoodToDraw = Math.min(chunkStart + RenderingService.MAX_FOOD_PER_DRAW, context.world.food.size);
-            let chunkLocalIndex = 0;
-            for (let globalIndex = chunkStart; globalIndex < remainingFoodToDraw; globalIndex++) {
-                const food = foodIterator.next().value;
-                gl.uniform2f(gl.getUniformLocation(this.shaders.food, `food[${chunkLocalIndex}].center`), food.center.x, food.center.y);
-                gl.uniform1f(gl.getUniformLocation(this.shaders.food, `food[${chunkLocalIndex}].radius`), food.radius);
-                chunkLocalIndex++;
-            }
-            gl.uniform1i(gl.getUniformLocation(this.shaders.food, `foodNumber`), remainingFoodToDraw);
+        context.setDrawToBufferTexture();
+        gl.drawArrays(gl.TRIANGLES, 0, 6 * instancesCount);
 
-            context.setDrawToBufferTexture();
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.deleteBuffer(vertexesBuffer);
+        gl.deleteBuffer(centersBuffer);
+        gl.deleteBuffer(radiusBuffer);
 
-            context.swapBuffers();
-        }
+        gl.disableVertexAttribArray(vertexPositionLoc);
+        gl.disableVertexAttribArray(foodCenterLoc);
+        gl.disableVertexAttribArray(foodRadiusLoc);
+        gl.vertexAttribDivisor(foodCenterLoc, 0);
+        gl.vertexAttribDivisor(foodRadiusLoc, 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
     private renderWalls(context: RenderingContext) {
         if (!context.world)
             return;
 
-        const gl = this.shaderManager.gl
-        gl.useProgram(this.shaders.wall)
+        const gl = this.shaderManager.gl;
+        gl.useProgram(this.shaders.wall);
 
         this.setupVertexShader(this.shaders.wall);
 
-        const viewMatrix = context.buildViewTransform()
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.shaders.wall, 'viewMatrix'), false, viewMatrix);
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.wall, 'fragmentViewTransform'),
+            false,
+            context.buildFragmentViewTransform());
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.wall, 'cameraTransform'),
+            false,
+            context.buildCameraTransform()
+        );
 
         const bufferTexturesSize = context.getBufferTexturesSize();
         gl.uniform2f(
@@ -162,6 +234,7 @@ export default class RenderingService {
         );
 
         for (const wall of context.world.walls.values()) {
+            context.updateSourceBufferTexture();
             gl.bindFramebuffer(gl.FRAMEBUFFER, context.framebuffer);
             gl.bindTexture(gl.TEXTURE_2D, context.getSourceBufferTexture());
             gl.uniform1i(gl.getUniformLocation(this.shaders.wall, 'image'), 0);
@@ -171,8 +244,6 @@ export default class RenderingService {
 
             context.setDrawToBufferTexture();
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-            context.swapBuffers();
         }
     }
 
@@ -186,8 +257,15 @@ export default class RenderingService {
         this.setupVertexShader(this.shaders.cell);
 
         gl.uniform1f(gl.getUniformLocation(this.shaders.cell, 'time'), (Date.now() - this.startTime)/1000);
-        const viewMatrix = context.buildViewTransform();
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.shaders.cell, 'viewMatrix'), false, viewMatrix);
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.cell, 'fragmentViewTransform'),
+            false,
+            context.buildFragmentViewTransform());
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.cell, 'cameraTransform'),
+            false,
+            context.buildCameraTransform()
+        );
 
         const bufferTexturesSize = context.getBufferTexturesSize();
         gl.uniform2f(
@@ -197,6 +275,7 @@ export default class RenderingService {
         );
 
         for (const cell of context.world.cells.values()) {
+            context.updateSourceBufferTexture();
             const aabb = cell.aabb; // TODO scale by 2 to handle the bigger visual AABB
             const [
                 [aabbMinX, aabbMinY],
@@ -259,21 +338,7 @@ export default class RenderingService {
 
             context.setDrawToBufferTexture();
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-            context.swapBuffers()
         }
-    }
-
-    private setupVertexShader(shader: WebGLShader) {
-        const gl = this.shaderManager.gl
-        const vertexAttributeLoc = gl.getAttribLocation(shader, 'vertexPosition')
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
-        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
-        gl.enableVertexAttribArray(vertexAttributeLoc)
-        const textureCoordinateLoc = gl.getAttribLocation(shader, 'textureCoordinate')
-        gl.enableVertexAttribArray(textureCoordinateLoc)
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.drawBufferTextureUv)
-        gl.vertexAttribPointer(textureCoordinateLoc, 2, gl.FLOAT, false, 0, 0)
     }
 
     private renderBackground(context: RenderingContext) {
@@ -283,32 +348,44 @@ export default class RenderingService {
         const gl = this.shaderManager.gl
         gl.useProgram(this.shaders.background)
 
-        this.setupVertexShader(this.shaders.background);
+        const vertexAttributeLoc = gl.getAttribLocation(this.shaders.background, 'vertexPosition')
+        gl.enableVertexAttribArray(vertexAttributeLoc)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
+        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
 
-        const viewMatrix = context.buildViewTransform()
-        gl.uniformMatrix4fv(gl.getUniformLocation(this.shaders.background, 'viewMatrix'), false, viewMatrix)
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.background, 'fragmentViewTransform'),
+            false,
+            context.buildFragmentViewTransform());
+        gl.uniformMatrix4fv(
+            gl.getUniformLocation(this.shaders.background, 'cameraTransform'),
+            false,
+            context.buildCameraTransform()
+        );
+
         gl.uniform1f(gl.getUniformLocation(this.shaders.background, 'time'), (Date.now() - this.startTime)/1000)
         gl.uniform2f(gl.getUniformLocation(this.shaders.background, 'areaSize'), context.world.width, context.world.height)
         gl.uniform1f(gl.getUniformLocation(this.shaders.background, 'lightIntensity'), context.world.lightIntensity)
 
         context.setDrawToBufferTexture();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-        context.swapBuffers()
+        gl.disableVertexAttribArray(vertexAttributeLoc);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+
+    private setupVertexShader(shader: WebGLShader) {
+        const gl = this.shaderManager.gl
+        const vertexAttributeLoc = gl.getAttribLocation(shader, 'vertexPosition')
+        gl.enableVertexAttribArray(vertexAttributeLoc)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mainMesh)
+        gl.vertexAttribPointer(vertexAttributeLoc, 2, gl.FLOAT, false, 0, 0)
     }
 
     private setDrawToCanvas() {
         const gl = this.shaderManager.gl;
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    }
-
-    private createDrawBufferTextureUv() {
-        return this.shaderManager.newArrayBuffer([
-            1.0,  1.0,
-            0.0,  1.0,
-            1.0,  0.0,
-            0.0,  0.0,
-        ])
     }
 
     private createMainMesh(): WebGLBuffer {

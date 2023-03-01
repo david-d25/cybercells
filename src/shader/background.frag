@@ -6,7 +6,8 @@ precision highp sampler2D;
 const float CHECKER_SIZE = 25.0;
 const vec4 LIGHT_COLOR = vec4(0.88, 0.88, 1, 1);
 
-uniform mat4 viewMatrix;
+uniform mat4 fragmentViewTransform;
+uniform mat4 cameraTransform;
 uniform float time;
 uniform vec2 areaSize;
 
@@ -19,7 +20,7 @@ vec4 lightFunction(float x, float y) {
 }
 
 void main() {
-    vec4 fragment = viewMatrix * gl_FragCoord;
+    vec4 fragment = cameraTransform * fragmentViewTransform * gl_FragCoord;
     float x = fragment.x;
     float y = fragment.y;
 

@@ -69,20 +69,55 @@ export default class RenderingContext {
         this.shaderManager.gl.deleteTexture(this.targetBufferTexture);
     }
 
-    // TODO cache transform (maybe use separate Camera object)
-    buildViewTransform(): mat4 {
+    // TODO cache
+    buildFragmentViewTransform(): mat4 {
         const canvasHeight = this.canvas.height;
 
-        const result = this.buildCameraTransform();
+        const result = mat4.create();
         mat4.scale(result, result, [1, -1, 1]);
         mat4.translate(result, result, [0, -canvasHeight, 0]);
         return result;
     }
 
-    swapBuffers() {
-        const swap = this.sourceBufferTexture;
-        this.sourceBufferTexture = this.targetBufferTexture;
-        this.targetBufferTexture = swap;
+    // TODO cache
+    buildVertexViewTransform(): mat4 {
+        const result = mat4.create();
+        mat4.translate(result, result, [-1, 1, 0]);
+        mat4.scale(result, result, [2, -2, 1]);
+        mat4.scale(result, result, [1/this.canvas.width, 1/this.canvas.height, 1]);
+        return result;
+    }
+
+    // TODO cache
+    buildCameraTransform(): mat4 {
+        if (!this.world)
+            throw new Error("Can't build camera transform: the world object is not set!")
+
+        const canvasWidth = this.canvas.width
+        const canvasHeight = this.canvas.height
+
+        const result = mat4.create()
+        const camera = this.world.camera
+        const scale = canvasHeight != 0 ? camera.height/canvasHeight : 1
+        mat4.scale(result, result, [scale, scale, 1])
+        mat4.translate(result, result, [
+            camera.center.x/scale - canvasWidth/2,
+            camera.center.y/scale - canvasHeight/2,
+            0
+        ])
+        return result
+    }
+
+    updateSourceBufferTexture() {
+        const gl = this.shaderManager.gl;
+        const size = this.bufferTexturesSize;
+        gl.bindTexture(gl.TEXTURE_2D, this.targetBufferTexture);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.targetBufferTexture, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.sourceBufferTexture);
+        gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, size.x, size.y, 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
     setDrawToBufferTexture() {
@@ -97,22 +132,6 @@ export default class RenderingContext {
 
     getSourceBufferTexture() {
         return this.sourceBufferTexture;
-    }
-
-    // TODO cache transform (maybe use separate Camera object)
-    private buildCameraTransform(): mat4 {
-        if (!this.world)
-            throw new Error("Can't build camera transform: the world object is not set!")
-
-        const canvasWidth = this.canvas.width
-        const canvasHeight = this.canvas.height
-
-        const result = mat4.create()
-        const camera = this.world.camera
-        const scale = canvasHeight != 0 ? camera.height/canvasHeight : 1
-        mat4.scale(result, result, [scale, scale, 1])
-        mat4.translate(result, result, [camera.center.x/scale - canvasWidth/2, camera.center.y/scale - canvasHeight/2, 0])
-        return result
     }
 
     private updateDrawBufferTexture() {

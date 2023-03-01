@@ -55,7 +55,6 @@ function stopHandleDragging() {
 <style lang="scss">
 .c-tabbed-panel {
   .tabbed-panel {
-    height: 100%;
     display: flex;
     max-height: 100%;
     pointer-events: all;

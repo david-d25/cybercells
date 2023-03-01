@@ -27,7 +27,8 @@ struct Obstacle {
 
 uniform sampler2D image;
 uniform vec2 imageSize;
-uniform mat4 viewMatrix;
+uniform mat4 fragmentViewTransform;
+uniform mat4 cameraTransform;
 uniform float time;
 
 uniform Cell cell;
@@ -129,7 +130,7 @@ bool isPointBehindObstacles(vec2 p) {
 }
 
 void main() {
-    vec4 fragment = viewMatrix * gl_FragCoord;
+    vec4 fragment = cameraTransform * fragmentViewTransform * gl_FragCoord;
     float x = fragment.x;
     float y = fragment.y;
 

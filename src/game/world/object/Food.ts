@@ -12,7 +12,6 @@ export default class Food implements WorldObject, HasAabb {
         public mass: number
     ) {}
 
-
     get radius() {
         return Math.sqrt(this.mass/Math.PI) / Food.FOOD_DENSITY
     }

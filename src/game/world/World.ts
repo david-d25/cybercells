@@ -187,6 +187,9 @@ export default class World {
         for (let i = 0; i < 10; i++) {
             world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
         }
+        for (let i = 0; i < 10; i++) {
+            world.add(new Food(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), 50));
+        }
         world.camera.center = new Vector2(400, 300);
         world.add(new Wall(new Vector2(0, 0), new Vector2(0, world.height)));
         world.add(new Wall(new Vector2(0, world.height), new Vector2(world.width, world.height)));
