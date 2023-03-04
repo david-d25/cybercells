@@ -70,16 +70,21 @@ export default class KineticsUpdater implements Updater {
     }
 
     // TODO use less Vector2 functions to improve performance
-    // TODO this function is based in incorrect math
+    // TODO cell can go through walls
     private processCellWallCollision(cell: Cell, wall: Wall, delta: number) {
         const intersections = Geometry.findLineAndCircleIntersections(cell.center, cell.radius, wall.a, wall.b);
         if (intersections.length !== 0) {
             const projection = Geometry.projectPointOntoLine(cell.center, [wall.a, wall.b]);
             const oppositeForce = projection.to(cell.center).unit.times(cell.radius - projection.distance(cell.center));
             const depth = Geometry.clamp(1 - cell.center.distance(projection) / cell.radius, 0, 1);
-            const hardnessCoefficient = (cell.genome.hardness * depth + 1) ** (cell.genome.hardness + 1);
+            const hardnessCoefficient = Geometry.clamp(2 * (1 - cell.genome.hardness) * (depth - 0.5) + 1, 0, 1);
             const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
-            const newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient * delta));
+            let newSpeed = oldSpeed.plus(oppositeForce.times(hardnessCoefficient * delta));
+            if (depth > 0.5) {
+                const angle = cell.center.to(projection).angle - cell.speed.angle;
+                const coefficient = Math.abs(angle) < Math.PI/4 ? Math.cos(angle) : 0;
+                newSpeed = newSpeed.plus(projection.to(cell.center).unit.times(2 * cell.speed.length * coefficient));
+            }
             this.cellsSpeedBuffer.set(cell.id, newSpeed);
         }
     }
@@ -96,14 +101,12 @@ export default class KineticsUpdater implements Updater {
             const toOtherCellDirection = toOtherCellCenter.unit
             const toNearestOtherCellSurfacePoint = toOtherCellCenter.minus(toOtherCellDirection.times(otherCell.radius));
             const toOtherCellSurfacePoint = toOtherCellDirection.times(cell.radius);
-            const rawForce = toOtherCellSurfacePoint.minus(toNearestOtherCellSurfacePoint);
-            const depth = (radiusSum - centersDistance)/radiusSum;
+            const rawForce = toNearestOtherCellSurfacePoint.minus(toOtherCellSurfacePoint);
+            const depth = (radiusSum - centersDistance)/radiusSum * 2;
             const hardnessAvg = (cell.genome.hardness + otherCell.genome.hardness)/2;
-            const hardnessCoefficient = Geometry.clamp(2 * hardnessAvg * (depth - 0.5) + 1, 0, 1);
+            const hardnessCoefficient = Geometry.clamp(2 * (1 - hardnessAvg) * (depth - 0.5) + 1, 0, 1);
             const thisCellForce = rawForce
-                .times(-otherCell.mass)
-                .times(hardnessCoefficient)
-                .div(cell.mass + otherCell.mass);
+                .times(hardnessCoefficient * otherCell.mass/(cell.mass + otherCell.mass));
 
             const oldSpeed = this.cellsSpeedBuffer.get(cell.id)!;
             const newSpeed = oldSpeed.plus(thisCellForce.times(delta));

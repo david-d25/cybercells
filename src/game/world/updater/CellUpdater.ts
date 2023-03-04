@@ -58,12 +58,13 @@ export default class CellUpdater implements Updater {
             child2.connections.set(child1.id, new CellConnectionState(child2ConnectionAngle, child1.id));
         }
 
+        const that = this;
+
         if (cell.genome.child1KeepConnections)
             processExistingConnections(child1);
         if (cell.genome.child2KeepConnections)
             processExistingConnections(child2);
 
-        const that = this;
         function processExistingConnections(child: Cell) {
             cell.connections.forEach(connection => {
                 const thisIsFirstChild = child.id == child1.id;
