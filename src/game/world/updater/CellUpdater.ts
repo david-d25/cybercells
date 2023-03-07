@@ -53,6 +53,9 @@ export default class CellUpdater implements Updater {
         const child1 = new Cell(child1Center, cell.speed, cell.mass / 2, child1Angle, 0, child1Genome);
         const child2 = new Cell(child2Center, cell.speed, cell.mass / 2, child2Angle, 0, child2Genome);
 
+        this.world.add(child1);
+        this.world.add(child2);
+
         if (cell.genome.stickOnSplit) {
             child1.connections.set(child2.id, new CellConnectionState(child1ConnectionAngle, child2.id));
             child2.connections.set(child1.id, new CellConnectionState(child2ConnectionAngle, child1.id));
@@ -106,7 +109,5 @@ export default class CellUpdater implements Updater {
         }
 
         this.world.remove(cell);
-        this.world.add(child1);
-        this.world.add(child2);
     }
 }

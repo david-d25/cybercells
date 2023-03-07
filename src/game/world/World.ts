@@ -185,10 +185,12 @@ export default class World {
         world.camera = new Camera(new Vector2(0, 0), 800)
         world.gravity = new Vector2(0, 0);
         for (let i = 0; i < 10; i++) {
-            world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, Genome.newSampleGenome()));
+            const genome = Genome.newSampleGenome();
+            genome.stickOnSplit = true;
+            world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, genome));
         }
-        for (let i = 0; i < 10; i++) {
-            world.add(new Food(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), 50));
+        for (let i = 0; i < 100; i++) {
+            world.add(new Food(new Vector2(world.width * Math.random(), world.height * Math.random()), 50));
         }
         world.camera.center = new Vector2(400, 300);
         world.add(new Wall(new Vector2(0, 0), new Vector2(0, world.height)));
