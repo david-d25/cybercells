@@ -73,7 +73,8 @@ export default class Vector2 {
     }
 
     get angle(): number {
-        return this.y > 0 ? 2*PI - acos(this.x/this.length) : acos(this.x/this.length)
+        return -(this.y > 0 ? 2*PI - acos(this.x/this.length) : acos(this.x/this.length));
+        // return (Math.atan2(-this.y, this.x) + 2 * Math.PI) % (2 * Math.PI);
     }
 
     get angleSafe(): number {

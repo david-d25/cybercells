@@ -52,7 +52,7 @@ import SliderWithNumberInput from "@/component/input/SliderWithNumberInput.vue";
 import GenomePigmentColorDropletIcon from "@/component/genome/GenomePigmentColorDropletIcon.vue";
 import Genome from "@/game/Genome";
 import {GenomeLibraryEntry} from "@/game/GenomeLibrary";
-import ColorUtil from "@/util/ColorUtil";
+import {cmywFromGenome, cmywToRgba, rgbaToCssString} from "@/util/ColorUtil";
 
 const selectedGenomeEntry = inject('selectedGenomeEntry') as Ref<GenomeLibraryEntry | null>
 const genome: Ref<Genome> = computed(() =>
@@ -86,14 +86,9 @@ function onFinalColorIndicatorResize() {
 
 function drawFinalColorIndicator() {
   const ctx = finalColorCanvasContext;
-  const rgba = ColorUtil.cmywToRgba(
-      genome.value.cyanPigment,
-      genome.value.magentaPigment,
-      genome.value.yellowPigment,
-      genome.value.whitePigment
-  );
+  const rgba = cmywToRgba(cmywFromGenome(genome.value));
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.fillStyle = `rgba(${rgba[0] * 255}, ${rgba[1] * 255}, ${rgba[2] * 255}, ${rgba[3]})`;
+  ctx.fillStyle = rgbaToCssString(rgba);
   ctx.strokeStyle = `rgb(${rgba[0] * 255}, ${rgba[1] * 255}, ${rgba[2] * 255})`;
   ctx.lineWidth = Math.min(ctx.canvas.width, ctx.canvas.height) * 0.06;
   ctx.beginPath();

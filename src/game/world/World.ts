@@ -179,24 +179,26 @@ export default class World {
     }
 
     static TEMPORARY_DEBUG = (() => {
-        const world = new World(800, 600);
+        const world = new World(200, 200);
         world.viscosity = 0.1;
         world.foodSpawnRate = 10;
         world.camera = new Camera(new Vector2(0, 0), 800)
         world.gravity = new Vector2(0, 0);
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 40; i++) {
             const genome = Genome.newSampleGenome();
-            genome.stickOnSplit = true;
-            world.add(new Cell(new Vector2(50 + Math.random()*(world.width - 100), 50 + Math.random()*200), new Vector2(), 400, 0, 0, genome));
+            // genome.stickOnSplit = true;
+            world.add(new Cell(new Vector2(world.width * Math.random(), world.height * Math.random()), new Vector2(), 400, 0, 0, genome));
         }
         for (let i = 0; i < 100; i++) {
             world.add(new Food(new Vector2(world.width * Math.random(), world.height * Math.random()), 50));
         }
-        world.camera.center = new Vector2(400, 300);
+        world.camera.center = new Vector2(world.width/2, world.height/2);
+        world.camera.height = world.height * 1.5;
         world.add(new Wall(new Vector2(0, 0), new Vector2(0, world.height)));
         world.add(new Wall(new Vector2(0, world.height), new Vector2(world.width, world.height)));
         world.add(new Wall(new Vector2(world.width, world.height), new Vector2(world.width, 0)));
         world.add(new Wall(new Vector2(world.width, 0), new Vector2(0, 0)));
+        world.updateCollisionSystem();
         return world;
     })()
 }

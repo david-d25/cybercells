@@ -59,12 +59,15 @@ export default class Geometry {
         const dy = y2 - y1;
         const d = Math.sqrt(dx * dx + dy * dy);
 
-        if (d > r1 + r2) {
+        if (d == 0 || d > r1 + r2)
             return [];
-        }
 
         const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
         const h = Math.sqrt(r1 * r1 - a * a);
+
+        if (isNaN(h))
+            return [];
+
         const x3 = x1 + (dx * a) / d;
         const y3 = y1 + (dy * a) / d;
         const xa = x3 + (h * dy) / d;
@@ -126,6 +129,18 @@ export default class Geometry {
 
     static clamp(value: number, min: number, max: number) {
         return Math.min(Math.max(value, min), max);
+    }
+
+    /**
+     * Calculates the shortest turn direction needed
+     * to get from first angle to second angle.
+     *
+     * @returns 1 if direction is counterclockwise, -1 otherwise
+     */
+    static shortestAngularTurn(a: number, b: number): number {
+        const diff = b - a
+        if (Math.abs(diff) < 1e-8) return 0;
+        return (diff < -Math.PI || diff >= 0.0 && diff < Math.PI) ? 1 : -1
     }
 
     private static findVerticalLineIntersection(

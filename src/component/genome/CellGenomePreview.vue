@@ -6,13 +6,12 @@
 
 <script setup lang="ts">
 import Genome from "@/game/Genome";
-import RenderingService from "@/render/RenderingService";
-import {inject, onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
+import Renderer from "@/render/Renderer";
+import {onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
 import World from "@/game/world/World";
 import Vector2 from "@/geom/Vector2";
 import Camera from "@/game/Camera";
 import Cell from "@/game/world/object/Cell";
-import RenderingContext from "@/render/RenderingContext";
 
 const props = defineProps<{
   genome: Genome | null
@@ -21,27 +20,24 @@ const props = defineProps<{
 const canvas = ref() as Ref<HTMLCanvasElement>;
 let dummyWorld: World = World.getDefault();
 let canvasSizeObserver: ResizeObserver
-let renderingService = inject('renderingService') as RenderingService
-let renderingContext: RenderingContext
+let renderer: Renderer
 
 onMounted(() => {
-  renderingContext = renderingService.newContext(canvas.value);
-  renderingContext.config.layers.background = false;
+  renderer = new Renderer(canvas.value, dummyWorld);
+  renderer.config.layers.background = false;
   canvasSizeObserver = new ResizeObserver(onCanvasResize);
   canvasSizeObserver.observe(canvas.value);
   updateRendererDummyWorld();
-  renderingContext.bindWorld(dummyWorld);
-  renderingContext.render()
+  renderer.render();
 })
 
 onBeforeUnmount(() => {
   canvasSizeObserver.disconnect();
-  renderingContext.destroy();
 })
 
 watch(props, () => {
   updateRendererDummyWorld()
-  renderingContext.render();
+  renderer.render();
 })
 
 function updateRendererDummyWorld() {
@@ -58,7 +54,7 @@ function onCanvasResize() {
   const { width, height } = canvas.value.getBoundingClientRect();
   canvas.value.width = Math.round(width * dpr);
   canvas.value.height = Math.round(height * dpr);
-  renderingContext.render();
+  renderer.render();
 }
 </script>
 

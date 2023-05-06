@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, provide, ref, shallowReactive} from "vue";
+import {provide, ref, shallowReactive} from "vue";
 
 import WorldViewer from "@/component/WorldViewer.vue";
 import ControlsPanel from "@/component/HudPanel.vue";
@@ -18,7 +18,6 @@ import Genome from "@/game/Genome";
 import SelectionTool from "@/tool/SelectionTool";
 import WorldUpdater from "@/game/world/updater/WorldUpdater";
 import WorldMouseEvent from "@/game/event/WorldMouseEvent";
-import RenderingService from "@/render/RenderingService";
 
 const tools = [ new SelectionTool(), new AddCellTool(), new RemoveCellTool() ];
 const world = World.TEMPORARY_DEBUG;
@@ -27,7 +26,6 @@ const genomeLibrary = new GenomeLibrary();
 const worldUpdater = new WorldUpdater(world);
 const appPreferences = new AppPreferences();
 const toolsManager = new ToolsManager(tools, world);
-const renderingService = new RenderingService();
 
 genomeLibrary.entries.add(new GenomeLibraryEntry("my genome", Genome.newSampleGenome()));
 genomeLibrary.entries.add(new GenomeLibraryEntry("test", Genome.newSampleGenome()));
@@ -39,14 +37,11 @@ provide('worldUpdater', shallowReactive(worldUpdater));
 provide('genomeLibrary', ref(genomeLibrary));
 provide('appPreferences', ref(appPreferences));
 provide('toolsManager', ref(toolsManager));
-provide('renderingService', shallowReactive(renderingService));
 
 function onWorldViewerEvent(event: any) {
   if (event instanceof WorldMouseEvent)
     toolsManager.dispatchEvent(event);
 }
-
-onBeforeUnmount(() => renderingService.destroy());
 </script>
 
 <style lang="scss">
